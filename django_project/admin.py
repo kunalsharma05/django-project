@@ -11,6 +11,7 @@ from django_project.models import Project
 from django_project.models import Task
 from django_project.models import TaskType
 from django_project.models import ObjectTask
+from django_project.models import Profile
 
 from django_project.models import Status
 from django_project.models import Transition
@@ -112,5 +113,6 @@ admin.site.register(Project)
 admin.site.register(Membership)
 admin.site.register(Component)
 admin.site.register(Milestone)
+admin.site.register(Profile)
 
 admin.site.register(Comment)

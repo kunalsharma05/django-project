@@ -28,5 +28,6 @@ urlpatterns += [
     url(r'^toggle/(?P<app>[^\/]+)/(?P<model>[^\/]+)/(?P<id>\d+)/$', follow.views.toggle, name='follow'),
     url(r'^toggle/(?P<app>[^\/]+)/(?P<model>[^\/]+)/(?P<id>\d+)/$', follow.views.toggle, name='unfollow'),
     url(r'^', include('django_project.urls')),
+    url(r'^', include('peragroUI.urls')),
 
 ]

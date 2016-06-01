@@ -69,6 +69,12 @@ class Component(models.Model):
     def __unicode__(self):
         return self.project.name+': '+self.name
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    description = models.TextField()
+    profile_pic = models.ImageField(upload_to = 'profile_pictures/', default = 'profile_pictures/user.png')
+    def __unicode__(self):
+        return self.user.username
 
 class Membership(models.Model):
     """
@@ -320,5 +326,5 @@ utils.register(Project)
 utils.register(Milestone)
 utils.register(Task)
 
-# IMPORTANT LINE, really leave it there!
-from django_project import handlers
+# # IMPORTANT LINE, really leave it there!
+# from django_project import handlers

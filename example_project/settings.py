@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'peragroUI',
     'reversion',
     'notifications',
     'follow',
@@ -42,6 +43,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'django_project',
     'smart_selects',
+    
 )
 
 MIDDLEWARE_CLASSES = (
@@ -86,6 +88,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
