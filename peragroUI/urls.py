@@ -11,6 +11,7 @@ urlpatterns = [
     # url(r'^$', views.index),
     url(r'^login/$', views.login_main),
     url(r'^dashboard/(?P<username>\w+)/$', views.dashboard, name='dashboard'),
+    url(r'^updateprofile/$', views.update_profile, name='update profile'),
     # url(r'^logout/$', views.user_logout),
     # url(r'^register/$', views.register),
     # url(r'^profile/$', views.profile_overview),

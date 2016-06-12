@@ -61,7 +61,7 @@
                   </li>
                   <li><a><i class="fa fa-edit"></i> Projects <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      {% for x in profile_user_membeship %}
+                      {% for x in self_user_membership %}
                       <li><a href="">{{x.project}}</a></li>
                       
                       {% endfor %}
@@ -104,7 +104,7 @@
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="images/img.jpg" alt="">{{user.first_name}} {{user.last_name}}
+                    <img src="images/img.jpg" alt="">
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
@@ -276,7 +276,7 @@
                         <!-- end of image cropping -->
 
                       </div>
-                      <h3>{{user.first_name}} {{user.last_name}}</h3>
+                      <h3>{{profile_user.first_name}} {{profile_user.last_name}}</h3>
 
 <!--                       <ul class="list-unstyled user_data">
                         <li><i class="fa fa-map-marker user-profile-icon"></i> San Francisco, California, USA
@@ -292,7 +292,7 @@
                         </li>
                       </ul>
  -->
-                      <button data-toggle="modal" data-target="#updateprofile_Modal" href="" class="btn btn-success" ><i class="fa fa-edit m-right-xs"></i>Edit Profile</button>
+                      
                       <br />
 
 
@@ -355,7 +355,7 @@
                                 <tr>
                                   <td>{{forloop.counter}}</td>
                                   <td>{{x.project.name}}</td>
-                                  <td>{{x.project.description}}</td>
+                                  <td>{{x.project.description}}/td>
                                   <td><a href="../dashboard/{{x.project.author}}">{{x.project.author}}</a></td>
                                   
                                     {% endfor %}
@@ -368,7 +368,7 @@
 
                           </div>
                           <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
-                            <p>{{user_profile.description}}</p>
+                            <p>{{profile_user_membership.description}}</p>
                           </div>
                         </div>
                       </div>
@@ -391,46 +391,7 @@
         <!-- /footer content -->
       </div>
     </div>
-<!-- Update profile Modal   -->
-<div id="updateprofile_Modal" class="modal fade" role="dialog"> 
-	<div class="modal-dialog modal-lg">
-        <div class="right_col" role="main">
-          <div class="">
-           <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Update Profile</h2>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
 
-                    <!-- start form for validation -->
-                    <form id="profile_update" name="profile_update" data-parsley-validate>
-                    	<label>First Name:</label>
-                    	<input type="text" class="form-control" name="fname" value="{{user.first_name}}" required />
-
-                    	<label>Last Name:</label>
-            			<input type="text" class="form-control" name="lname" value="{{user.last_name}}" required />
-                      
-						<label>Description:</label>
-                        <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="You need to enter at least a 20 caracters long description."
-                            data-parsley-validation-threshold="10">{{user_profile.description}}</textarea>
-
-                      
-
-                      
-                          <br/>
-                          <input value="Update" type="submit" class="btn btn-primary" />
-
-                    </form>
-                    <!-- end form for validations -->
-
-                  </div>
-                </div>
-      </div>
-    </div>
-    </div>
-
-    </div>
     <!-- jQuery -->
     <script src="{% static 'peragroUI/css/vendors/jquery/dist/jquery.min.js' %}"></script>
     <!-- Bootstrap -->
@@ -525,56 +486,6 @@
         });
       });
     </script>
-<script type="text/javascript">
-  
-  // var prof_flag=0
-  // $("input#dp").on('change', function(e) {
-  //       dp = e.target.files;
-  //       prof_flag=1;
-  //   });
-// function collect_data() {
-    
-
-//     // if(prof_flag==1){
-//     //   $.each(dp, function(key, value)
-//     //         {
-//     //             data.append(key, value);
-//     //         });
-//     // }
-//     return data;
-// }
-$("form#profile_update").submit(function(e) {
-    e.preventDefault();
-    var data = new FormData();
-    
-    data.append('fname', $('input[name="fname"]').val());
-    data.append('lname', $('input[name="lname"]').val());
-    data.append('description', $('input[name="description"]').val());
-    
-
-    
-	// if($('input[name=fname]').val() == '') {
-	// 	$('input[name="fname"]').addClass('has-error'); }
-	// if($('select[name="lname"]' ).val() == '') {
-	// 	$('select[name="lname"]').addClass('has-error'); }
-	// else {
-    $.ajax({
-        url: '../../updateprofile/',
-        type: 'POST',
-        data: data,
-        cache: false,
-        // dataType: 'html',
-        processData: false,
-        contentType: false,
-        success: function(data)
-        {
-            if(data=='done')
-              window.location.href="../../dashboard/{{user.username}}";
-        }
-    }); 
-// }
-    
-});
-</script>
+    <!-- /datepicker -->
   </body>
 </html>

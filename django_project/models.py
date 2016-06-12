@@ -70,9 +70,12 @@ class Component(models.Model):
         return self.project.name+': '+self.name
 
 class Profile(models.Model):
+    """
+    """    
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
     profile_pic = models.ImageField(upload_to = 'profile_pictures/', default = 'profile_pictures/user.png')
+    
     def __unicode__(self):
         return self.user.username
 

@@ -84,18 +84,48 @@ def dashboard(request, username):
 			# }
 			# return render(request, 'registration/dashboard_allied.html', context)
 		else:
-			user_profile = Profile.objects.get(pk=username)
-			profile_user = user_profile.user
+			profile_user = User.objects.get(username=username)
+			user_profile = Profile.objects.get(user=profile_user)
 			profile_user_membership = Membership.objects.filter(member=profile_user)
+			self_user_membership = Membership.objects.filter(member=self_user)
 			context = {
 				'user' : self_user,
 				'user_profile' : user_profile,
 				'profile_user' : profile_user,
 				'profile_user_membership':profile_user_membership,
+				'self_user_membership':self_user_membership,
 			}
 			return render(request, 'profile_dashboard.html', context)
 	else:
 		pass
+
+@csrf_exempt
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+		user_ob = request.user
+		user_profile = Profile.objects.get(pk=user_ob)
+		
+		user_ob.first_name = request.POST['fname']
+		user_ob.last_name = request.POST['lname']
+		user_profile.description = request.POST['description']
+		try:
+			user_profile.profile_pic= request.FILES['0']
+		except:
+			dumpvar=0
+
+		user_ob.save()
+		user_profile.save()
+		return HttpResponse('done')
+
+# def user_validation(request, val_user): #This function validates the users and returns a value which will indicate whether a given user is the one that is loggd in or som
+# 	user = request.user
+# 	if user == val_user:
+# 		return
+# 	else:
+# 		return
+
+
 # def registration(request):
 #     # Like before, get the request's context.
 # 	context = RequestContext(request)
