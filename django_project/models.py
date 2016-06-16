@@ -1,16 +1,21 @@
 import datetime
-
+import os
 from django.db import models
 from django.contrib.auth.models import User, Group, AnonymousUser, Permission
-
+from example_project.settings import *
 from django.utils.translation import ugettext_lazy as __
 from django.utils.translation import ugettext as _
-
+from example_project.settings import *
 from autoslug import AutoSlugField
 
 from smart_selects.db_fields import ChainedForeignKey
 
 from django_project.mixins import ProjectMixin, TaskMixin, CommentMixin
+
+from thrift.protocol.TJSONProtocol import TJSONProtocol
+from damn_at.serialization import SerializeThriftMsg, DeserializeThriftMsg
+from damn_at import AssetDescription, FileDescription
+from damn_at.utilities import unique_asset_id_reference_from_fields
 
 
 class Project(ProjectMixin, models.Model):
@@ -75,7 +80,8 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
     profile_pic = models.ImageField(upload_to = 'profile_pictures/', default = 'profile_pictures/user.png')
-    
+    organisation = models.CharField(max_length=256, blank=False)
+    position = models.CharField(blank=True, max_length=128)
     def __unicode__(self):
         return self.user.username
 
@@ -316,6 +322,46 @@ class ObjectTask(models.Model):
 
     def __str__(self):
         return "%s for %s" % (str(self.task), str(self.content_object))
+
+
+
+
+
+def upload_manager(instance, filename):
+	user = instance.project.author
+	user_profile = Profile.objects.get(user=user)
+	user_organisation = user_profile.organisation
+	user_project = instance.project.name
+	b = str(MEDIA_ROOT)
+	a = b+'/'+user_organisation+'/'+user_project+'/'+filename+'/'
+	return a
+	# return MEDIA_ROOT
+
+class MediaUpload(models.Model):
+	project = models.ForeignKey(Project, related_name='files', on_delete=models.CASCADE)
+	# owner = models.ForeignKey(User, on_delete=models.CASCADE)
+	media = models.FileField(upload_to=upload_manager)
+	mimetype = models.CharField(max_length=255, null=True, blank=True)
+	file_description = models.TextField()
+	def __unicode__(self):
+		return 'File: %s %s'%(self.media.name, self.mimetype)
+
+class AssetsMedia(models.Model):
+	
+	file = models.ForeignKey(MediaUpload, related_name='assets', on_delete=models.CASCADE)
+	subname = models.CharField(max_length=255)
+	mimetype = models.CharField(max_length=255, null=True, blank=True)
+	asset_description = models.TextField()
+	def __unicode__(self):
+		return 'AssetReference: %s %s'%(self.subname, self.mimetype)
+
+class DependenciesRelation(models.Model):
+	file = models.ForeignKey(MediaUpload, on_delete=models.CASCADE)
+	asset = models.ForeignKey(AssetsMedia, related_name='asset')
+	dependency = models.ForeignKey(AssetsMedia, related_name='dependency')
+	def __unicode__(self):
+		return 'Dependency of %s : %s'%(self.asset.subname, self.dependency.subname)
+
 
 
 from follow import utils

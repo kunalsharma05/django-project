@@ -12,9 +12,9 @@ urlpatterns = [
     url(r'^login/$', views.login_main),
     url(r'^dashboard/(?P<username>\w+)/$', views.dashboard, name='dashboard'),
     url(r'^updateprofile/$', views.update_profile, name='update profile'),
-    # url(r'^logout/$', views.user_logout),
+    url(r'^logout/$', views.user_logout, name='logout'),
     # url(r'^register/$', views.register),
-    # url(r'^profile/$', views.profile_overview),
+    url('^project/(?P<author_name>\w+)/(?P<project_slug>[\w]+)/$', views.project_page, name='projects'),
     # url(r'^profile/edit/$', views.edit_profile),
     # url(r'^profile/help/$', views.profile_help),
 

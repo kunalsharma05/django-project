@@ -12,7 +12,9 @@ from django_project.models import Task
 from django_project.models import TaskType
 from django_project.models import ObjectTask
 from django_project.models import Profile
-
+from django_project.models import MediaUpload
+from django_project.models import AssetsMedia
+from django_project.models import DependenciesRelation
 from django_project.models import Status
 from django_project.models import Transition
 
@@ -114,5 +116,7 @@ admin.site.register(Membership)
 admin.site.register(Component)
 admin.site.register(Milestone)
 admin.site.register(Profile)
-
+admin.site.register(MediaUpload)
+admin.site.register(AssetsMedia)
+admin.site.register(DependenciesRelation)
 admin.site.register(Comment)

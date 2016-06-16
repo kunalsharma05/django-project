@@ -54,6 +54,10 @@ def login_main(request):
 		error = 'POST request not sent'
 		return render(request, 'login.html',{'error':error})
 
+def user_logout(request):
+    logout(request)
+    return redirect('../../login/')
+
 @csrf_exempt
 @login_required
 def dashboard(request, username):
@@ -117,6 +121,38 @@ def update_profile(request):
 		user_ob.save()
 		user_profile.save()
 		return HttpResponse('done')
+
+@csrf_exempt
+@login_required
+def project_page(request, author_name, project_slug):
+	
+	author_ob = User.objects.get(username = author_name)
+	project_ob = Project.objects.filter(author = author_ob, slug = project_slug)[0]
+	members_list = project_ob.members.all()
+	profile_list = []	
+	for x in members_list:
+		p = Profile.objects.get(pk = x)
+		profile_list.append(p)
+	context={
+		'project_ob':project_ob,
+		'profile_list':profile_list,
+	}
+	if request.method == 'POST':
+		# for x in 
+		media_ob = MediaUpload.objects.create(project=project_ob)
+		media_ob.media = request.FILES['file']
+		# media_ob.project = project_ob
+		media_ob.save()
+		return HttpResponse('done')
+	else:
+		return render(request, 'project_page.html', context)
+		# try:
+		# 	artist_ob.profile_pic= request.FILES['0']
+  #           except:
+  #               dumpvar=0
+	
+
+
 
 # def user_validation(request, val_user): #This function validates the users and returns a value which will indicate whether a given user is the one that is loggd in or som
 # 	user = request.user
