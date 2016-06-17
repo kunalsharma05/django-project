@@ -29,6 +29,10 @@ from django_project import models
 from django_project import signals
 from django_project import filters as dp_filters
 
+from damn_at import Analyzer, FileDescription, FileId
+from damn_at.analyzer import *
+from damn_at.utilities import *
+
 # def home(request):
 #     return render(request,'login.html')
 @csrf_exempt
@@ -109,7 +113,7 @@ def update_profile(request):
     if request.method == 'POST':
 		user_ob = request.user
 		user_profile = Profile.objects.get(pk=user_ob)
-		
+		user_membership = Membership.objects.filter(member=user_ob)
 		user_ob.first_name = request.POST['fname']
 		user_ob.last_name = request.POST['lname']
 		user_profile.description = request.POST['description']
@@ -125,7 +129,12 @@ def update_profile(request):
 @csrf_exempt
 @login_required
 def project_page(request, author_name, project_slug):
-	
+	user = request.user
+	user_profile = Profile.objects.get(pk=user)
+	user_membership = Membership.objects.filter(member=user)
+	project_list=[]
+	for x in user_membership:
+		project_list.append(x.project)
 	author_ob = User.objects.get(username = author_name)
 	project_ob = Project.objects.filter(author = author_ob, slug = project_slug)[0]
 	members_list = project_ob.members.all()
@@ -136,6 +145,9 @@ def project_page(request, author_name, project_slug):
 	context={
 		'project_ob':project_ob,
 		'profile_list':profile_list,
+		'user_profile' : user_profile,
+		'user' : user,
+		'user_project_list':project_list,
 	}
 	if request.method == 'POST':
 		# for x in 
@@ -143,6 +155,11 @@ def project_page(request, author_name, project_slug):
 		media_ob.media = request.FILES['file']
 		# media_ob.project = project_ob
 		media_ob.save()
+		if media_ob.media.url:
+			analyer = Analyzer()
+			media_ob.description = analyer.analyze_file(media_ob.media.url)
+			media_ob.save()
+
 		return HttpResponse('done')
 	else:
 		return render(request, 'project_page.html', context)

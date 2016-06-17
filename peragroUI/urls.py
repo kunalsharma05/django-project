@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^updateprofile/$', views.update_profile, name='update profile'),
     url(r'^logout/$', views.user_logout, name='logout'),
     # url(r'^register/$', views.register),
-    url('^project/(?P<author_name>\w+)/(?P<project_slug>[\w]+)/$', views.project_page, name='projects'),
+    url('^project/(?P<author_name>\w+)/(?P<project_slug>[^/]+)/$', views.project_page, name='projects'),
     # url(r'^profile/edit/$', views.edit_profile),
     # url(r'^profile/help/$', views.profile_help),
 

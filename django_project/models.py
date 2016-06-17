@@ -332,8 +332,8 @@ def upload_manager(instance, filename):
 	user_profile = Profile.objects.get(user=user)
 	user_organisation = user_profile.organisation
 	user_project = instance.project.name
-	b = str(MEDIA_ROOT)
-	a = b+'/'+user_organisation+'/'+user_project+'/'+filename+'/'
+	# b = str(MEDIA_ROOT)
+	a = user_organisation+'/'+user_project+'/'+filename+'/'
 	return a
 	# return MEDIA_ROOT
 
