@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import os
+import tempfile
 from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import resolve
@@ -22,16 +23,17 @@ from django.db import IntegrityError
 import difflib
 import json
 from django.http import JsonResponse
-
+from example_project.settings import *
 from django_project import serializers
 from django_project import models
 
 from django_project import signals
 from django_project import filters as dp_filters
-
+from exceptions import *
 from damn_at import Analyzer, FileDescription, FileId
 from damn_at.analyzer import *
 from damn_at.utilities import *
+from damn_at.analyzer import AnalyzerException
 
 # def home(request):
 #     return render(request,'login.html')
@@ -72,10 +74,14 @@ def dashboard(request, username):
 		if username == self_username:
 			user_profile = Profile.objects.get(pk=self_user)
 			user_membership = Membership.objects.filter(member=self_user)
+			project_list=[]
+			for x in user_membership:
+				project_list.append(x.project)
 			context = {
 				'user_profile' : user_profile,
 				'user' : self_user,
 				'profile_user_membership':user_membership,
+				'project_list':project_list,
 			}
 			return render(request, 'self_dashboard.html', context)   
 	  #   elif allied_ob:
@@ -96,12 +102,18 @@ def dashboard(request, username):
 			user_profile = Profile.objects.get(user=profile_user)
 			profile_user_membership = Membership.objects.filter(member=profile_user)
 			self_user_membership = Membership.objects.filter(member=self_user)
+			self_user_profile = Profile.objects.get(pk=self_user)
+			project_list=[]
+			for x in self_user_membership:
+				project_list.append(x.project)
 			context = {
 				'user' : self_user,
 				'user_profile' : user_profile,
 				'profile_user' : profile_user,
 				'profile_user_membership':profile_user_membership,
 				'self_user_membership':self_user_membership,
+				'self_user_profile':self_user_profile,
+				'project_list':project_list,
 			}
 			return render(request, 'profile_dashboard.html', context)
 	else:
@@ -138,6 +150,11 @@ def project_page(request, author_name, project_slug):
 	author_ob = User.objects.get(username = author_name)
 	project_ob = Project.objects.filter(author = author_ob, slug = project_slug)[0]
 	members_list = project_ob.members.all()
+	project_media = MediaUpload.objects.filter(project=project_ob)
+
+	task_list = Task.objects.filter(project=project_ob)
+	
+
 	profile_list = []	
 	for x in members_list:
 		p = Profile.objects.get(pk = x)
@@ -148,6 +165,7 @@ def project_page(request, author_name, project_slug):
 		'user_profile' : user_profile,
 		'user' : user,
 		'user_project_list':project_list,
+		'project_media':project_media,
 	}
 	if request.method == 'POST':
 		# for x in 
@@ -157,8 +175,11 @@ def project_page(request, author_name, project_slug):
 		media_ob.save()
 		if media_ob.media.url:
 			analyer = Analyzer()
-			media_ob.description = analyer.analyze_file(media_ob.media.url)
-			media_ob.save()
+			path = os.path.join(MEDIA_ROOT, media_ob.media.name)
+			if analyer.analyze_file(path):
+				media_ob.description = analyer.analyze_file(path)
+				media_ob.hash = calculate_hash_for_file(path)
+				media_ob.save()
 
 		return HttpResponse('done')
 	else:
@@ -169,10 +190,12 @@ def project_page(request, author_name, project_slug):
   #               dumpvar=0
 	
 
-
+# @login_required
+# @csrf_exempt
+# def media_image(request):
 
 # def user_validation(request, val_user): #This function validates the users and returns a value which will indicate whether a given user is the one that is loggd in or som
-# 	user = request.user
+# 	user = RequestContextst.user
 # 	if user == val_user:
 # 		return
 # 	else:

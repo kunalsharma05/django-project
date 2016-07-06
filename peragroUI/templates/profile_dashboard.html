@@ -38,7 +38,7 @@
             <!-- menu profile quick info -->
             <div class="profile">
               <div class="profile_pic">
-                <img src="{{user_profile.profile_pic}}" alt="..." class="img-circle profile_img">
+                <img src="{{self_user_profile.profile_pic.url}}" alt="..." class="img-circle profile_img">
               </div>
               <div class="profile_info">
                 <span>Welcome,</span>
@@ -61,8 +61,8 @@
                   </li>
                   <li><a><i class="fa fa-edit"></i> Projects <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      {% for x in self_user_membership %}
-                      <li><a href="">{{x.project}}</a></li>
+                      {% for x in user_project_list %}
+                      <li><a href="../../{{x.author}}/{{x.slug}}/">{{x.name}}</a></li>
                       
                       {% endfor %}
                     </ul>
@@ -205,7 +205,7 @@
 
                         <div id="crop-avatar">
                           <!-- Current avatar -->
-                          <img class="img-responsive avatar-view" src="{{user_profile.url}}">
+                          <img class="img-responsive avatar-view" src="{{user_profile.profile_pic.url}}">
 
                           <!-- Cropping modal -->
                           <!-- <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">

@@ -338,11 +338,12 @@ def upload_manager(instance, filename):
 	# return MEDIA_ROOT
 
 class MediaUpload(models.Model):
-	project = models.ForeignKey(Project, related_name='files', on_delete=models.CASCADE)
+	project = models.ForeignKey(Project, related_name='files_project', on_delete=models.CASCADE)
 	# owner = models.ForeignKey(User, on_delete=models.CASCADE)
 	media = models.FileField(upload_to=upload_manager)
 	mimetype = models.CharField(max_length=255, null=True, blank=True)
 	file_description = models.TextField()
+	hash = models.CharField(max_length=128, db_index=True)
 	def __unicode__(self):
 		return 'File: %s %s'%(self.media.name, self.mimetype)
 

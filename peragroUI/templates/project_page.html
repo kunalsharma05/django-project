@@ -163,7 +163,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>{{project_ob.name}}</h2><
+                    <h2>{{project_ob.name}}</h2>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -192,6 +192,8 @@
                           <li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">Upload Media</a>
                           </li>
                           <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">View Media</a>
+                          </li>
+                          <li role="presentation" class=""><a href="#tab_content4" role="tab" id="task-tab" data-toggle="tab" aria-expanded="false">Manage Tasks</a>
                           </li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
@@ -226,8 +228,8 @@
 
 
                           <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-
-                          <form id="myForm" class="dropzone"></form>
+                            <p>Drag multiple files to the box below for multi upload or click to select files.</p>
+                          <div id="myForm" class="dropzone"></div>
                           <!-- <button id="submit-all">
                             Submit all files
                           </button>
@@ -237,8 +239,41 @@
                           
 
                           <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
-                          
+                            <div class="x_content">
+
+                    <div class="row">
+
+                      <p>All project media for {{project_ob.name}}</p>
+                      {% for x in project_media %}
+                      <div class="col-md-55">
+                        <div class="thumbnail">
+                          <div class="image view view-first">
+                            <img style="width: 100%; display: block;" src="{{x.media.url}}" alt="image" />
+                            <div class="mask">
+                              <p></p>
+                              <div class="tools tools-bottom">
+                                <a href="#"><i class="fa fa-link"></i></a>
+                                <a href="#"><i class="fa fa-pencil"></i></a>
+                                <!-- <a href="#"><i class="fa fa-times"></i></a> -->
+                              </div>
+                            </div>
                           </div>
+                          <div class="caption" style="word-wrap: break-word;">
+                            <strong>{{x.media.name}}</strong>
+                            
+                            <!-- <p></p> -->
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                      </div>
+                      </div>
+                          </div><!-- div for panel 3 -->
+                              <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="task-tab">
+                                <div class="x_content">
+                              <!-- <h1>View Taks:</h1> -->
+                                </div>
+                            </div><!-- for panel 4 -->   
                         </div>
                       </div>
                     </div>
@@ -293,10 +328,10 @@
                 formData.append("author_name", "{{project_ob.author}}")
                 formData.append("project_slug", "{{project_ob.slug}}")
             }),
-            this.on("success", function(data){
-                if(data=="done")
-                window.location.href=".";
-            })
+              this.on('completemultiple', function () {
+                window.location.href="../{{project_ob.slug}}/";
+            
+              });
         },
     });
   // var prof_flag=0

@@ -1,0 +1,320 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <!-- Bootstrap -->
+     <link href="{% static 'peragroUI/css/vendors/bootstrap/dist/css/bootstrap.min.css' %}" type="text/css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="{% static 'peragroUI/css/vendors/font-awesome/css/font-awesome.min.css' %}" type="text/css" rel="stylesheet" />
+
+    <!-- <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
+    <!-- Animate.css -->
+    
+    <link href="https://colorlib.com/polygon/gentelella/css/animate.min.css" rel="stylesheet">
+
+    <link href="{% static 'peragroUI/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
+  </head>
+
+ <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Peragro</span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile">
+              <div class="profile_pic">
+                <img src="{{user_profile.profile_pic}}" alt="..." class="img-circle profile_img">
+              </div>
+              <div class="profile_info">
+                <span>Welcome,</span>
+                <h2>{{user.first_name}} {{user.last_name}}</h2>
+              </div>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <h3></br></br></br></br></br></br></h3>
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="../dashboard/{{user.username}}">Dashboard</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-edit"></i> Projects <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      {% for x in profile_user_membeship %}
+                      <li><a href="">{{x.project}}</a></li>
+                      
+                      {% endfor %}
+                    </ul>
+                  </li>
+                  
+                </ul>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav class="" role="navigation">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="images/img.jpg" alt="">{{user.first_name}} {{user.last_name}}
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="javascript:;"> Profile</a></li>
+                    <li>
+                      <a href="javascript:;">
+                        <span class="badge bg-red pull-right">50%</span>
+                        <span>Settings</span>
+                      </a>
+                    </li>
+                    <li><a href="javascript:;">Help</a></li>
+                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                  </ul>
+                </li>
+
+                <!--  FOR THE NOTIFICATIONS MODULE
+                <li role="presentation" class="dropdown">
+                  <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="badge bg-green">6</span>
+                  </a>
+                  <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                    <li>
+                      <a>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time"></span>
+                        </span>
+                        <span class="message">
+                          
+                        </span>
+                      </a>
+                    </li> -->
+                    <!-- <li>
+                      <div class="text-center">
+                        <a>
+                          <strong>See All Alerts</strong>
+                          <i class="fa fa-angle-right"></i>
+                        </a>
+                      </div>
+                    </li> -->
+                  <!-- </ul> -->
+                <!-- </li> -->
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>Plain Page</h3>
+              </div>
+
+              <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">Go!</button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Plain Page</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                      <div style="width: 546px; height: 546px; position: relative; -moz-user-select: none;" class="canvas-container"><canvas class="lower-canvas" id="c" width="545.4545617103577" height="545.4545617103577" style="border: 1px solid rgb(170, 170, 170); position: relative; width: 500px; height: 500px; left: 0px; top: 0px; -moz-user-select: none;"></canvas></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            Digital Assets Managed Neatly
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+    <!-- jQuery -->
+   <script src="{% static 'peragroUI/css/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'peragroUI/css/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'peragroUI/css/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static 'peragroUI/css/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- morris.js -->
+    <script src="{% static 'peragroUI/css/vendors/raphael/raphael.min.js' %}"></script>
+    <script src="{% static 'peragroUI/css/vendors/morris.js/morris.min.js' %}"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="{% static 'peragroUI/css/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static 'peragroUI/js/moment/moment.min.js' %}"></script>
+    <script src="{% static 'peragroUI/js/datepicker/daterangepicker.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'peragroUI/build/js/custom.min.js' %}"></script>
+<script id="main">(function() {
+  var $ = function(id){return document.getElementById(id)};
+
+  var canvas = this.__canvas = new fabric.Canvas('c', {
+    isDrawingMode: true
+  });
+
+  canvas.freeDrawingBrush.color = "#f55";
+  canvas.freeDrawingBrush.width = 5;
+
+
+  var clearCanvas = $('clear-canvas');
+  var clearSerialOutput = $('clear-json');
+  var getJson = $('get-json');
+  var setJson = $('set-json');
+  var deserialize = $('deserialize-json');
+  var colorselector = $('color-select');
+  var widthselector = $('width-select');
+  var widthdisplay = $('width');
+  var inserttext = $('insert-text');
+  var flag = 0;
+  colorselector.onchange = function() {
+      canvas.freeDrawingBrush.color = this.value;
+    };
+
+  widthselector.onchange = function() {
+      canvas.freeDrawingBrush.width = parseInt(widthselector.value, 10) || 1;
+      widthdisplay.innerHTML = widthselector.value;
+  };
+
+
+  getJson.onclick = function() { 
+    console.log(JSON.stringify(canvas));
+    setJson.innerHTML = JSON.stringify(canvas);
+    console.log("----------------------------------");
+    };    
+  
+  clearCanvas.onclick = function() { 
+    canvas.clear();
+    };
+  
+  clearSerialOutput.onclick = function() { 
+    setJson.innerHTML = "";
+    };
+
+  deserialize.onclick = function() {
+    canvas.loadFromJSON(setJson.innerHTML,canvas.renderAll.bind(canvas));
+  };
+  
+  inserttext.onclick = function() {
+    if (flag == 0){
+      flag = 1;
+      inserttext.innerHTML = "Insert Text ON";
+        console.log(flag);
+        canvas.isDrawingMode = !canvas.isDrawingMode;
+
+    }
+    else if (flag == 1){
+      flag = 0;
+      inserttext.innerHTML = "Insert Text OFF";
+        console.log(flag);
+        canvas.isDrawingMode = !canvas.isDrawingMode;
+    }
+  };
+
+  
+  canvas.on('mouse:down', function(options) {
+  if(flag == 1) {
+    if (options.target == null){ 
+        addText(options.e);
+        console.log(flag);
+      }
+  }
+  });
+
+
+  function addText(e) {
+
+  var custontxt=new fabric.IText('Start Typing', { 
+  fontFamily: 'helvetica',
+  fontSize:30,
+  fontWeight:400,
+  fill:'red', 
+  fontStyle: 'normal', 
+  top:e.offsetY,
+  cursorDuration:500,    
+  left:e.offsetX,   
+  });  
+  canvas.add(custontxt);
+  custontxt.enterEditing();
+  }
+
+})();
+</script>
+  </body>
+</html>
