@@ -177,7 +177,7 @@ def project_page(request, author_name, project_slug):
 			analyer = Analyzer()
 			path = os.path.join(MEDIA_ROOT, media_ob.media.name)
 			if analyer.analyze_file(path):
-				media_ob.description = analyer.analyze_file(path)
+				media_ob.description = str(analyer.analyze_file(path))
 				media_ob.hash = calculate_hash_for_file(path)
 				media_ob.save()
 
