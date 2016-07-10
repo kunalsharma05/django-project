@@ -30,7 +30,7 @@ from django_project import models
 from django_project import signals
 from django_project import filters as dp_filters
 from exceptions import *
-from damn_at import Analyzer, FileDescription, FileId
+from damn_at import Analyzer, FileDescription, FileId, mimetypes
 from damn_at.analyzer import *
 from damn_at.utilities import *
 from damn_at.analyzer import AnalyzerException
@@ -174,12 +174,14 @@ def project_page(request, author_name, project_slug):
 		# media_ob.project = project_ob
 		media_ob.save()
 		if media_ob.media.url:
-			analyer = Analyzer()
+			analyzer = Analyzer()
 			path = os.path.join(MEDIA_ROOT, media_ob.media.name)
-			if analyer.analyze_file(path):
-				media_ob.description = str(analyer.analyze_file(path))
-				media_ob.hash = calculate_hash_for_file(path)
-				media_ob.save()
+			media_ob.mimetype = mimetypes.guess_type(path, False)[0]
+			file_descr = analyzer.analyze_file(path)
+			file_descr.hash = calculate_hash_for_file(path)
+			media_ob.file_description = file_descr
+			media_ob.hash = file_descr.hash
+			media_ob.save()
 
 		return HttpResponse('done')
 	else:
@@ -188,7 +190,31 @@ def project_page(request, author_name, project_slug):
 		# 	artist_ob.profile_pic= request.FILES['0']
   #           except:
   #               dumpvar=0
+
+@login_required	
+def media_view(request, mid):
+	media_ob = MediaUpload.objects.get(id= mid)
+	if request.method=='POST':
+		comment = Comment()
+		comment.author = request.user
+		comment.content_type = ContentType.objects.get_for_model(media_ob)
+		comment.object_pk = mid
+		comment.save()
 	
+	path = os.path.join(MEDIA_ROOT, media_ob.media.name)
+	analyzer = Analyzer()
+	file_descr = analyzer.analyze_file(path)
+	mdesc = pretty_print_file_description(file_descr)
+	comment_content_type = ContentType.objects.get_for_model(media_ob)
+	comments = Comment.objects.filter(content_type__pk=comment_content_type.id, object_pk=str(mid))
+	#  fileid = FileId(filename=os.path.abspath(an_uri))
+	# file_descr = FileDescription(file=fileid)
+	context = {
+		'mdesc':mdesc,
+		'media_ob':media_ob,
+		'comments':comments,
+	} 
+	return render(request, 'media_image.html', context)
 
 # @login_required
 # @csrf_exempt

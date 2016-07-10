@@ -17,6 +17,8 @@ urlpatterns = [
     url('^project/(?P<author_name>\w+)/(?P<project_slug>[^/]+)/$', views.project_page, name='projects'),
     # url(r'^profile/edit/$', views.edit_profile),
     # url(r'^profile/help/$', views.profile_help),
+	url(r'^media/(?P<mid>[0-9]+)/$', views.media_view, name='media review'),
+
 
     # url(r'^questions/$', views.questions),
     # url(r'^query/$', views.query),

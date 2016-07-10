@@ -363,7 +363,7 @@ class DependenciesRelation(models.Model):
 	def __unicode__(self):
 		return 'Dependency of %s : %s'%(self.asset.subname, self.dependency.subname)
 
-class Annotations(models.Model):
+# class Annotations(models.Model):
 
 from follow import utils
 from reversion import revisions as reversion
