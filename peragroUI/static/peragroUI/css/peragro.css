@@ -1,0 +1,9 @@
+@charset "UTF-8";
+.canvas-container{
+  margin: 0 auto !important;
+  flaot: inherit;
+}
+
+.body{
+	color:#000;
+}

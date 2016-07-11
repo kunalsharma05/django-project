@@ -288,7 +288,7 @@ class Comment(CommentMixin, models.Model):
     content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
 
     comment = models.TextField(_('comment'), max_length=COMMENT_MAX_LENGTH)
-
+    annotation = models.TextField(null=True)
     # Metadata about the comment
     submit_date = models.DateTimeField(_('date/time submitted'), auto_now_add=True, editable=False)
 
@@ -347,23 +347,28 @@ class MediaUpload(models.Model):
 	def __unicode__(self):
 		return 'File: %s %s'%(self.media.name, self.mimetype)
 
-class AssetsMedia(models.Model):
+# class AssetsMedia(models.Model):
 	
-	file = models.ForeignKey(MediaUpload, related_name='assets', on_delete=models.CASCADE)
-	subname = models.CharField(max_length=255)
-	mimetype = models.CharField(max_length=255, null=True, blank=True)
-	asset_description = models.TextField()
-	def __unicode__(self):
-		return 'AssetReference: %s %s'%(self.subname, self.mimetype)
+# 	file = models.ForeignKey(MediaUpload, related_name='assets', on_delete=models.CASCADE)
+# 	subname = models.CharField(max_length=255)
+# 	mimetype = models.CharField(max_length=255, null=True, blank=True)
+# 	asset_description = models.TextField()
+# 	def __unicode__(self):
+# 		return 'AssetReference: %s %s'%(self.subname, self.mimetype)
 
-class DependenciesRelation(models.Model):
-	file = models.ForeignKey(MediaUpload, on_delete=models.CASCADE)
-	asset = models.ForeignKey(AssetsMedia, related_name='asset')
-	dependency = models.ForeignKey(AssetsMedia, related_name='dependency')
-	def __unicode__(self):
-		return 'Dependency of %s : %s'%(self.asset.subname, self.dependency.subname)
+# class DependenciesRelation(models.Model):
+# 	file = models.ForeignKey(MediaUpload, on_delete=models.CASCADE)
+# 	asset = models.ForeignKey(AssetsMedia, related_name='asset')
+# 	dependency = models.ForeignKey(AssetsMedia, related_name='dependency')
+# 	def __unicode__(self):
+# 		return 'Dependency of %s : %s'%(self.asset.subname, self.dependency.subname)
 
-# class Annotations(models.Model):
+# class Annotation(models.Model):
+# 	comment = models.OneToOneField(Comment, on_delete=models.CASCADE)
+	
+# 	# aspect_ratio = models.DecimalField(max_digits=5, decimal_places=3)
+# 	def __unicode__(self):
+# 		return str(self.comment)
 
 from follow import utils
 from reversion import revisions as reversion

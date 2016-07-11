@@ -190,7 +190,7 @@ def project_page(request, author_name, project_slug):
 		# 	artist_ob.profile_pic= request.FILES['0']
   #           except:
   #               dumpvar=0
-
+@csrf_exempt
 @login_required	
 def media_view(request, mid):
 	media_ob = MediaUpload.objects.get(id= mid)
@@ -199,8 +199,10 @@ def media_view(request, mid):
 		comment.author = request.user
 		comment.content_type = ContentType.objects.get_for_model(media_ob)
 		comment.object_pk = mid
+		comment.annotation = str(request.POST['json-data'])
 		comment.save()
-	
+		return HttpResponse('done')
+
 	path = os.path.join(MEDIA_ROOT, media_ob.media.name)
 	analyzer = Analyzer()
 	file_descr = analyzer.analyze_file(path)
