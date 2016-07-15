@@ -199,9 +199,12 @@ def media_view(request, mid):
 		comment.author = request.user
 		comment.content_type = ContentType.objects.get_for_model(media_ob)
 		comment.object_pk = mid
-		comment.annotation = str(request.POST['json-data'])
+		try:
+			comment.annotation = str(request.POST['json-data'])
+		except:
+			comment.annotation = None
 		comment.save()
-		return HttpResponse('done')
+		return HttpResponseRedirect('.')
 
 	path = os.path.join(MEDIA_ROOT, media_ob.media.name)
 	analyzer = Analyzer()

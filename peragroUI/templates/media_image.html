@@ -25,6 +25,29 @@
     <link href="{% static 'peragroUI/css/custom.css' %}" rel="stylesheet" type="text/css" />
 <!--     <link href="{% static 'peragroUI/css/peargro.css' %}" rel="stylesheet" type="text/css" />
  -->    
+    <!-- jQuery -->
+   <script src="{% static 'peragroUI/css/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'peragroUI/css/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'peragroUI/css/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static 'peragroUI/css/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- morris.js -->
+    <script src="{% static 'peragroUI/css/vendors/raphael/raphael.min.js' %}"></script>
+    <script src="{% static 'peragroUI/css/vendors/morris.js/morris.min.js' %}"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="{% static 'peragroUI/css/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static 'peragroUI/js/moment/moment.min.js' %}"></script>
+    <script src="{% static 'peragroUI/js/datepicker/daterangepicker.js' %}"></script>
+
+<!--     FabricJS
+ -->    <script src="{% static 'peragroUI/build/js/fabric.min.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'peragroUI/build/js/custom.min.js' %}"></script>
+    <script src="{% static 'peragroUI/build/js/annotation.js' %}"></script>
   </head>
 <!--  -->
  <body class="nav-md">
@@ -38,57 +61,141 @@
                   <button id="annotate" data-toggle="modal" data-target="#annotation_modal" href="" class="btn btn-success" ><i class="fa fa-edit m-right-xs"></i>Annotate</button>
                       
 <!--                       <button id="clear-canvas" class="btn btn-info">Clear Canvas</button><br>
-				<button id="get-json" class="btn btn-info">Get JSON</button><br>
-				 <label for="drawing-color">Line color:</label>
-				    <input type="color" value="#f55f55" id="color-select">
-				  <label for="drawing-line-width">Line width:</label>
-				   <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
+        <button id="get-json" class="btn btn-info">Get JSON</button><br>
+         <label for="drawing-color">Line color:</label>
+            <input type="color" value="#f55f55" id="color-select">
+          <label for="drawing-line-width">Line width:</label>
+           <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
  -->
-				<h2 id='media-name'>{{media_ob.media.name}}</h2>
+        <h2 id='media-name'>{{media_ob.media.name}}</h2>
 
-				    
-				<div class="jumbotron" id="image-view" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
+            
+        <div class="jumbotron" id="image-view" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
 
-				<h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3>
-				<div>
-				<p id = "set-json"></p>
-				</div><!-- 
-				<button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
-				<button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
-				<button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br> -->
+        <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3>
+        <div>
+        <p id = "set-json"></p>
+        </div><!-- 
+        <button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
+        <button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
+        <button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br> -->
 
                   </div>
                 </div>
               </div>
             
 
-	        <div class="col-md-3">
-	          <div class="x_panel">
-	            <!-- /menu profile quick info -->
-	            <div class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+          <div class="col-md-3">
+            <div class="x_panel">
+              <!-- /menu profile quick info -->
+              <div class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
 
                             <!-- start recent activity -->
                             <ul class="messages">
+                              {% for x in comments %}
                               <li>
                                 <img src="" class="avatar" alt="Avatar">
                                 <div class="message_date">
-                                  <h4 class="date text-info">24</h4>
-                                  <p class="month">May</p>
+                                  <h4 class="date text-info"></h4>
+                                  <p class="month"></p>
                                 </div>
                                 <div class="message_wrapper">
-                                  <h4 class="heading">Desmond Davison</h4>
-                                  <blockquote class="message" style="font-size: 12px;"><p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</p></blockquote>
+                                  <h4 class="heading">{{x.author}}</h4>
+                                  <blockquote class="message" style="font-size: 12px;"><p>{{x.comment}}</p></blockquote>
                                   <br />
+                                  {% if x.annotation %}
+                                  <button id = "{{x.id}}{{x.author}}"></button>
                                   <p class="url">
+                                    <canvas class="lower-canvas" id="{{x.id}}" anno="{{x.annotation}}" style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas>
+                                    </br>
+                                      <div id="poop"></div>
                                     <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
                                     <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
                                   </p>
+                                  {% endif %}
                                 </div>
-                              </li>
+                              <script>
+                              $(function() {
+                                  
+                                  document.getElementById('{{x.id}}{{x.author}}').onclick = (function() {     
+                              
+                                  var canvas = new fabric.Canvas('{{x.id}}');
+                                  var cv_anno = $('#{{x.id}}');
+                                  var anno = String(cv_anno.attr('anno'));
+                                  // var object = JSON.parse(anno);
+                                  annotation_canvas = document.getElementById('d');
+                                  canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas))
+                                  // if(){
+                                    // console.log("poop");
+                                    // var bg_image = canvas.backgroundImage;
+                                    // bg_image.scaleX = bg_image.scaleX * factor;
+                                  // }
 
-                                                              
+                                   var old_width = annotation_canvas.width;
+                                   var old_height = annotation_canvas.height;
+                                   var factor = 300.00/old_width;
+                                   
+                                  canvas.setWidth(old_width);
+                                  canvas.setHeight(old_height);
+                                  
+                                  // b.scaleX = b.scaleX * factor;
+                                  // b.scaleY = b.scaleY * factor;
+                                  // b.left = b.left * factor;
+                                  // b.top = b.top * factor;
+                                  // var factor = 0.5;
+                                  var objects = canvas.getObjects();
+                                  for (var i in objects) {
+                                      var scaleX = objects[i].scaleX;
+                                      var scaleY = objects[i].scaleY;
+                                      var left = objects[i].left;
+                                      var top = objects[i].top;
+                                      var tempScaleX = scaleX * factor;
+                                      var tempScaleY = scaleY * factor;
+                                      var tempLeft = left * factor;
+                                      var tempTop = top * factor;
+
+                                      objects[i].scaleX = tempScaleX;
+                                      objects[i].scaleY = tempScaleY;
+                                      objects[i].left = tempLeft;
+                                      objects[i].top = tempTop;
+
+                                      objects[i].setCoords();
+                                  }
+                                 
+                                  // b.setCoords();
+                                  // }
+                                  canvas.renderAll();
+                                  canvas.calcOffset();
+                                  // console.log(dataURL);
+                                //           var dataURL = canvas.toDataURL();
+                                //       var img = new Image();
+                                //       img.src =  dataURL; 
+                                //           var img = new Image();
+                                //           img.src = dataURL;
+                                //           document.getElementById('poop').appendChild(img);
+                                //           img.style.height = annotation_canvas.height+"px";
+                                //           img.style.width = annotation_canvas.width+"px";
+
+                                //     // var ca = new fabric.Canvas('comm_can');
+
+                                // //     fabric.Image.fromURL(dataURL, function (img) {
+                                // //     var oimg = img.set({
+                                // //         left: 30,
+                                // //         top: 30,
+                                // //         scaleX: 20 / img.width,
+                                // //         scaleY: 20 / img.height,
+                                // //     });
+                                // //     ca.add(oimg);
+                                // //     ca.renderAll();
+                                // // });
+                                });
+                                       });
+                                  </script>
+                              </li>
+                                
+                                 {% endfor %}                             
                               <li>
-                              	<img src="" class="avatar" alt="Avatar">
+                                <img src="" class="avatar" alt="Avatar">
                               <div class="message_date">
                                   <h4 class="date text-info"></h4>
                                   <p id="com_date" class="month"></p>
@@ -102,13 +209,13 @@
                             <!-- end recent activity -->
 
                           </div> 
-	            </div>
+              </div>
 
-	            <!-- sidebar menu -->
-	           	          </div>
-	        </div>
-		</div>
-		</div>
+              <!-- sidebar menu -->
+                        </div>
+          </div>
+    </div>
+    </div>
         <!-- top navigation -->
         <!-- <div class="top_nav">
           <div class="nav_menu">
@@ -175,7 +282,7 @@
         
         <!-- /page content -->
 <div id="annotation_modal" class="modal fade" role="dialog"> 
-	<div class="modal-dialog modal-lg" id="style-modal">
+  <div class="modal-dialog modal-lg" id="style-modal">
         <div class="right_col" role="main">
           <div class="">
            <div class="x_panel"  style="padding:6px;">
@@ -183,32 +290,32 @@
                     <h2>Update Profile</h2>
                     <div class="clearfix"></div>
                   </div>
-	                  <div class="x_content">
+                    <div class="x_content">
 
                     <!-- start form for validation -->
                     <button id="clear-canvas" class="btn btn-info">Clear Canvas</button><br>
-				<button id="get-json" class="btn btn-info">Get JSON</button><br>
-				 <label for="drawing-color">Line color:</label>
-				    <input type="color" value="#f55f55" id="color-select">
-				  <label for="drawing-line-width">Line width:</label>
-				   <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
+        <button id="get-json" class="btn btn-info">Get JSON</button><br>
+         <label for="drawing-color">Line color:</label>
+            <input type="color" value="#f55f55" id="color-select">
+          <label for="drawing-line-width">Line width:</label>
+           <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
 
-				<h2>Canvas for drawing</h2>
+        <h2>Canvas for drawing</h2>
 
-				    
-				<!-- <div class="jumbotron" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> --><canvas class="lower-canvas" id="d"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas><!-- </div> -->
+            
+        <!-- <div class="jumbotron" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> --><canvas class="lower-canvas" id="d"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas><!-- </div> -->
 
-				<h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3>
-				<div>
-				<p id = "set-json"></p>
-				</div>
-				<button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
-				<button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
-				<button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br>
-				<button id="comment" class="btn btn-info">Comment</button><br>
-				<form id="commForm" action="." method="POST">
-				<input type="hidden" id="inp-data" name="json-data" />
-				</form>
+        <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3>
+        <div>
+        <p id = "set-json"></p>
+        </div>
+        <button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
+        <button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
+        <button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br>
+        <button id="comment" class="btn btn-info">Comment</button><br>
+        <form id="commForm" action="." method="POST">
+        <input type="hidden" id="inp-data" name="json-data" />
+        </form>
                   </div>
                 </div>
       </div>
@@ -227,29 +334,6 @@
       </div>
     </div>
 
-    <!-- jQuery -->
-   <script src="{% static 'peragroUI/css/vendors/jquery/dist/jquery.min.js' %}"></script>
-    <!-- Bootstrap -->
-    <script src="{% static 'peragroUI/css/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-    <!-- FastClick -->
-    <script src="{% static 'peragroUI/css/vendors/fastclick/lib/fastclick.js' %}"></script>
-    <!-- NProgress -->
-    <script src="{% static 'peragroUI/css/vendors/nprogress/nprogress.js' %}"></script>
-    <!-- morris.js -->
-    <script src="{% static 'peragroUI/css/vendors/raphael/raphael.min.js' %}"></script>
-    <script src="{% static 'peragroUI/css/vendors/morris.js/morris.min.js' %}"></script>
-    <!-- bootstrap-progressbar -->
-    <script src="{% static 'peragroUI/css/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
-    <!-- bootstrap-daterangepicker -->
-    <script src="{% static 'peragroUI/js/moment/moment.min.js' %}"></script>
-    <script src="{% static 'peragroUI/js/datepicker/daterangepicker.js' %}"></script>
-
-<!--     FabricJS
- -->    <script src="{% static 'peragroUI/build/js/fabric.min.js' %}"></script>
     
-    <!-- Custom Theme Scripts -->
-    <script src="{% static 'peragroUI/build/js/custom.min.js' %}"></script>
-    <script src="{% static 'peragroUI/build/js/annotation.js' %}"></script>
-
   </body>
 </html>
