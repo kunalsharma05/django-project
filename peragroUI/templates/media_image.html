@@ -94,23 +94,23 @@
                             <ul class="messages">
                               {% for x in comments %}
                               <li>
-                                <img src="" class="avatar" alt="Avatar">
+                                <img src="{{x.author.profile.profile_pic.url}}" class="avatar" alt="Avatar">
                                 <div class="message_date">
                                   <h4 class="date text-info"></h4>
                                   <p class="month"></p>
                                 </div>
                                 <div class="message_wrapper">
-                                  <h4 class="heading">{{x.author}}</h4>
+                                  <h4 class="heading">{{x.author.username}}</h4>
                                   <blockquote class="message" style="font-size: 12px;"><p>{{x.comment}}</p></blockquote>
                                   <br />
+                                  <button id = "{{x.id}}{{x.author}}" style="display:none;" class="xyz"></button>
                                   {% if x.annotation %}
-                                  <button id = "{{x.id}}{{x.author}}" class="xyz"></button>
                                   <p class="url">
                                     <canvas class="lower-canvas" id="{{x.id}}" anno="{{x.annotation}}" style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas>
                                      <!-- <canvas id="c1{{x.id}}" style="border:1px solid black;" ></canvas> -->
                                     </br>
 					<!-- <canvas id="my_canvas_id"></canvas>  -->
-                                    <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
+                                    <!-- <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a> -->
                                   </p>
                                   {% endif %}
                                 </div>
@@ -119,15 +119,17 @@
                                 
                                  {% endfor %}                             
                               <li>
-                                <img src="" class="avatar" alt="Avatar">
+                                <img src="{{user.profile.profile_pic.url}}" class="avatar" alt="Avatar">
                               <div class="message_date">
-                                  <h4 class="date text-info"></h4>
+                                  <h4 class="heading"></h4>
                                   <p id="com_date" class="month"></p>
                                 </div>
                               <div class="message_wrapper">
-                                  <h4 class="heading"></h4>
-                                  <textarea style="width: 100%"></textarea>
-
+                                  <h4 class="heading">{{user.username}}</h4>
+                                  <form id="only-text" action="." method="POST">
+                                  <textarea style="width: 100%" name="comm-text" form="only-text"></textarea>
+                                  <input type="submit" value="Comment" />
+                                  </form>
                               </li>
                             </ul>
                             <!-- end recent activity -->
@@ -218,28 +220,29 @@
 
                     <!-- start form for validation -->
                     <button id="clear-canvas" class="btn btn-info">Clear Canvas</button><br>
-        <button id="get-json" class="btn btn-info">Get JSON</button><br>
+        <!-- <button id="get-json" class="btn btn-info">Get JSON</button><br> -->
          <label for="drawing-color">Line color:</label>
             <input type="color" value="#f55f55" id="color-select">
           <label for="drawing-line-width">Line width:</label>
            <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
 
-        <h2>Canvas for drawing</h2>
+        <h2>Canvas for Annotations</h2>
 
             
         <!-- <div class="jumbotron" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> --><canvas class="lower-canvas" id="d"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas><!-- </div> -->
 
-        <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3>
-        <div>
-        <p id = "set-json"></p>
-        </div>
-        <button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
-        <button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
-        <button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br>
-        <button id="comment" class="btn btn-info">Comment</button><br>
+        <!-- <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3> -->
+        </br>
+        </br>
         <form id="commForm" action="." method="POST">
+    <img src="{{user.profile.profile_pic.url}}" class="avatar" alt="Avatar">
+                              <!-- <div class="message_date"> -->
+                                  <h4 class="heading">{{user.username}}</h4>
+           <textarea style="width: 100%" form="commForm" name="comm-text"></textarea>
+
         <input type="hidden" id="inp-data" name="json-data" />
         </form>
+        <button id="comment" class="btn btn-info">Comment</button><br>
                   </div>
                 </div>
       </div>

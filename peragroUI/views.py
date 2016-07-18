@@ -199,6 +199,7 @@ def media_view(request, mid):
 		comment.author = request.user
 		comment.content_type = ContentType.objects.get_for_model(media_ob)
 		comment.object_pk = mid
+		comment.comment = request.POST['comm-text']
 		try:
 			comment.annotation = str(request.POST['json-data'])
 		except:
@@ -212,12 +213,18 @@ def media_view(request, mid):
 	mdesc = pretty_print_file_description(file_descr)
 	comment_content_type = ContentType.objects.get_for_model(media_ob)
 	comments = Comment.objects.filter(content_type__pk=comment_content_type.id, object_pk=str(mid))
+	# clist = []
+	# for x in comments:
+	# 	userx = x.author
+	# 	user_profile = Profile.objects.get(pk=userx)
+	# 	clist.append(x, user_profile)
 	#  fileid = FileId(filename=os.path.abspath(an_uri))
 	# file_descr = FileDescription(file=fileid)
 	context = {
 		'mdesc':mdesc,
 		'media_ob':media_ob,
 		'comments':comments,
+		'user':request.user,
 	} 
 	return render(request, 'media_image.html', context)
 
