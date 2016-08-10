@@ -255,8 +255,8 @@ class Task(TaskMixin, models.Model):
     level = models.IntegerField(null=True)
     summary = models.CharField(_('summary'), max_length=64)
     description = models.TextField(_('description'))
-
-    status = ChainedForeignKey(Status, chained_field="project", chained_model_field="project", verbose_name=_('status'))
+    status = models.CharField(max_length=256, default='STATUS_ACTIVE')
+    # status = ChainedForeignKey(Status, chained_field="project", chained_model_field="project", verbose_name=_('status'))
     priority = ChainedForeignKey(Priority, chained_field="project", chained_model_field="project", verbose_name=_('priority'))
     type = ChainedForeignKey(TaskType, chained_field="project", chained_model_field="project", verbose_name=_('task type'))
 
@@ -278,10 +278,19 @@ class Task(TaskMixin, models.Model):
         return u'%s' % (self.summary)
 
 
+class Role(models.Model):
+    project = models.ForeignKey(Project, verbose_name=_('project'))
+    name = models.CharField(max_length=256, null=True)
 
-#     project = models.ForeignKey(Project, verbose_name=_('project'))
-#     name = models.CharField(max_length=256, null=True)
+    def __unicode__(self):
+        return self.project.name+':'+self.name
 
+class Resource(models.Model):
+    task = models.ForeignKey(Task)
+    user = models.ForeignKey(User)
+
+    def __unicode__(self):
+            return self.task.project.name+':'+self.task.name+' '+self.user.username
 
 
 
