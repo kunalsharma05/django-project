@@ -5,7 +5,7 @@ from reversion.admin import VersionAdmin
 
 from django_project.models import Component
 from django_project.models import Membership
-from django_project.models import Milestone
+# from django_project.models import Milestone
 from django_project.models import Priority
 from django_project.models import Project
 from django_project.models import Task
@@ -30,8 +30,8 @@ class StatusAdmin(admin.ModelAdmin):
     #readonly_fields = ['project']
 
 
-class TaskAdmin(VersionAdmin):
-    list_display = ( 'project', 'milestone', 'component', 'id', 'summary',
+class TaskAdmin(VersionAdmin):           #milestone removed , 'milestone'
+    list_display = ( 'project', 'component', 'id', 'summary',
         'created_at', 'author', 'owner', 'status', 'priority', 'type', 'nr_of_versions')
     list_display_links = ('summary',)
     list_filter = ('project',)
@@ -49,7 +49,6 @@ class TaskAdmin(VersionAdmin):
                 'priority',
                 'type',
                 'owner',
-                'milestone',
                 'deadline',
             )
         }),
@@ -70,9 +69,9 @@ class OrderedDictModelAdmin(admin.ModelAdmin):
     list_display_links = ( 'id', 'name' )
     list_editable = ( 'order', )
 
-class MilestoneInline(admin.TabularInline):
-    model = Milestone
-    extra = 1
+# class MilestoneInline(admin.TabularInline):
+#     model = Milestone
+#     extra = 1
 
 class TaskTypeInline(admin.TabularInline):
     model = TaskType
@@ -115,7 +114,7 @@ admin.site.register(ObjectTask)
 admin.site.register(Project)
 admin.site.register(Membership)
 admin.site.register(Component)
-admin.site.register(Milestone)
+# admin.site.register(Milestone)
 admin.site.register(Profile)
 admin.site.register(MediaUpload)
 # admin.site.register(AssetsMedia)

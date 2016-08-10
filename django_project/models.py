@@ -99,27 +99,27 @@ class Membership(models.Model):
         unique_together = ('project', 'member')
 
 
-class Milestone(models.Model):
-    """
-    """
-    project = models.ForeignKey(Project, verbose_name=_('project'))
-    name = models.CharField(max_length=64)
-    slug = AutoSlugField(max_length=64, populate_from='name', always_update=True, unique_with='project')
-    description = models.TextField()
-    author = models.ForeignKey(User, verbose_name=_('author'))
-    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-    modified_at = models.DateTimeField(_('modified at'), auto_now=True)
-    deadline = models.DateField(_('deadline'), default=datetime.date.today() + datetime.timedelta(days=10))
-    date_completed = models.DateField(_('date completed'), null=True, blank=True)
+# class Milestone(models.Model):
+#     """
+#     """
+#     project = models.ForeignKey(Project, verbose_name=_('project'))
+#     name = models.CharField(max_length=64)
+#     slug = AutoSlugField(max_length=64, populate_from='name', always_update=True, unique_with='project')
+#     description = models.TextField()
+#     author = models.ForeignKey(User, verbose_name=_('author'))
+#     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+#     modified_at = models.DateTimeField(_('modified at'), auto_now=True)
+#     deadline = models.DateField(_('deadline'), default=datetime.date.today() + datetime.timedelta(days=10))
+#     date_completed = models.DateField(_('date completed'), null=True, blank=True)
 
-    class Meta:
-        ordering = ('created_at',)
-        verbose_name = _('milestone')
-        verbose_name_plural = _('milestones')
-        unique_together = ('project', 'name')
+#     class Meta:
+#         ordering = ('created_at',)
+#         verbose_name = _('milestone')
+#         verbose_name_plural = _('milestones')
+#         unique_together = ('project', 'name')
 
-    def __unicode__(self):
-        return self.project.name+': '+self.name
+#     def __unicode__(self):
+#         return self.project.name+': '+self.name
 
 
 class DictModel(models.Model):
@@ -245,12 +245,14 @@ class TaskType(OrderedDictModel):
 class Task(TaskMixin, models.Model):
     """
     """
+    name = models.CharField(max_length=256, null=True, blank=True)
+    short_name = models.CharField(max_length=126, null=True, blank=True)
     project = models.ForeignKey(Project, verbose_name=_('project'))
 
     author = models.ForeignKey(User, verbose_name=_('author'), related_name='created_tasks', blank=True)
 
     owner = models.ForeignKey(User, verbose_name=_('owner'), related_name='owned_tasks', null=True, blank=True)
-
+    level = models.IntegerField(null=True)
     summary = models.CharField(_('summary'), max_length=64)
     description = models.TextField(_('description'))
 
@@ -258,15 +260,30 @@ class Task(TaskMixin, models.Model):
     priority = ChainedForeignKey(Priority, chained_field="project", chained_model_field="project", verbose_name=_('priority'))
     type = ChainedForeignKey(TaskType, chained_field="project", chained_model_field="project", verbose_name=_('task type'))
 
-    deadline = models.DateField(_('deadline'), null=True, blank=True, help_text='YYYY-MM-DD')
+    start = models.DateField(_('start'), null=True, blank=True, help_text='YYYY-MM-DD')
+    end = models.DateField(_('end'), null=True, blank=True, help_text='YYYY-MM-DD')
 
-    milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
+    start_is_milestone = models.BooleanField(default=False)
+    end_is_milestone = models.BooleanField(default=False)
+
+    assignees = ManyToManyField(User)
+
+
+    # milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
     component = ChainedForeignKey(Component, chained_field="project", chained_model_field="project", verbose_name=_('component'))
 
     created_at = models.DateTimeField(_('created at'), auto_now_add=True, editable=False)
 
     def __unicode__(self):
         return u'%s' % (self.summary)
+
+
+
+#     project = models.ForeignKey(Project, verbose_name=_('project'))
+#     name = models.CharField(max_length=256, null=True)
+
+
+
 
 
 from django.conf import settings
@@ -378,7 +395,7 @@ reversion.register(Task)
 utils.register(User)
 
 utils.register(Project)
-utils.register(Milestone)
+# utils.register(Milestone)
 utils.register(Task)
 
 # # IMPORTANT LINE, really leave it there!

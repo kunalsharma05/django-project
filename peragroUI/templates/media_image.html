@@ -68,11 +68,16 @@
            <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
  -->
         <h2 id='media-name'>{{media_ob.media.name}}</h2>
-
+        <p>
+        Assets: {{file_descr.assets}}
+        {% for x in file_descr.assets %}
+        Dependencies: {{x.dependencies}}
+        {% endfor %}
+        </p>
             
         <div class="jumbotron" id="image-view" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
 
-        <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3>
+        <!-- <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3> -->
         <div>
         <p id = "set-json"></p>
         </div><!-- 
@@ -213,19 +218,25 @@
           <div class="">
            <div class="x_panel"  style="padding:6px;">
                   <div class="x_title">
-                    <h2>Update Profile</h2>
+                    <h2>Annotation Panel</h2>
                     <div class="clearfix"></div>
                   </div>
                     <div class="x_content">
 
                     <!-- start form for validation -->
-                    <button id="clear-canvas" class="btn btn-info">Clear Canvas</button><br>
-        <!-- <button id="get-json" class="btn btn-info">Get JSON</button><br> -->
-         <label for="drawing-color">Line color:</label>
-            <input type="color" value="#f55f55" id="color-select">
-          <label for="drawing-line-width">Line width:</label>
-           <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
+                    <table>
 
+                    <tr><td><button id="clear-canvas" class="btn btn-info">Clear Canvas</button></td>
+                    <td><button id="insert-text" class="btn btn-info">Insert Text</button></td>
+        <!-- <button id="get-json" class="btn btn-info">Get JSON</button><br> -->
+         <td><label for="drawing-color">Line color:</label>
+            <input type="color" value="#f55f55" id="color-select"></td>
+            </tr>
+            <tr>
+          <td><label for="drawing-line-width">Line width:</label>
+           <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select">
+</td>
+</tr></table>
         <h2>Canvas for Annotations</h2>
 
             

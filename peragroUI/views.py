@@ -213,6 +213,9 @@ def media_view(request, mid):
 	mdesc = pretty_print_file_description(file_descr)
 	comment_content_type = ContentType.objects.get_for_model(media_ob)
 	comments = Comment.objects.filter(content_type__pk=comment_content_type.id, object_pk=str(mid))
+	
+
+
 	# clist = []
 	# for x in comments:
 	# 	userx = x.author
@@ -222,6 +225,7 @@ def media_view(request, mid):
 	# file_descr = FileDescription(file=fileid)
 	context = {
 		'mdesc':mdesc,
+		'file_descr':file_descr,
 		'media_ob':media_ob,
 		'comments':comments,
 		'user':request.user,

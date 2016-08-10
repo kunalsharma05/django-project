@@ -35,7 +35,7 @@ class TaskFilter(django_filters.FilterSet):
     deadline = ExtendedDateRangeFilter()
     class Meta:
         model = models.Task
-        fields = ['owner', 'author', 'status', 'component', 'milestone']    
+        fields = ['owner', 'author', 'status', 'component'] #milestone removed , 'milestone'    
         order_by = (
                         ('status__order', 'Status'),
                         ('priority__order', 'Priority'),
@@ -67,7 +67,7 @@ class CommentFilter(django_filters.FilterSet):
                         ('-submit_date', 'Date'),
                     )
 
-class MilestoneFilter(django_filters.FilterSet):
-    deadline = ExtendedDateRangeFilter()
-    class Meta:
-        model = models.Milestone
+# class MilestoneFilter(django_filters.FilterSet):
+#     deadline = ExtendedDateRangeFilter()
+#     class Meta:
+#         model = models.Milestone

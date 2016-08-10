@@ -12,7 +12,7 @@ from rest_framework.relations import RelatedField
 from notifications.models import Notification
 from follow.models import Follow
 
-from django_project.models import Project, Task, Milestone, Component, Comment, ObjectTask
+from django_project.models import Project, Task, Component, Comment, ObjectTask
 from django_project import models
 
 
@@ -135,10 +135,10 @@ class UserNameSerializer(ExtendedHyperlinkedModelSerializer):
         fields = ('id', 'url', 'name')
 
 
-class MilestoneSerializer(FollowSerializerMixin, ExtendedHyperlinkedModelSerializer):
-    class Meta:
-        model = Milestone
-        read_only_fields = ('project', 'slug', 'author', )
+# class MilestoneSerializer(FollowSerializerMixin, ExtendedHyperlinkedModelSerializer):
+#     class Meta:
+#         model = Milestone
+#         read_only_fields = ('project', 'slug', 'author', )
 
 
 class ProjectMemberSerializer(ExtendedHyperlinkedModelSerializer):
