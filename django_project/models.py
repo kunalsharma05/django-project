@@ -289,7 +289,7 @@ class AssignedResource_Relation(models.Model):
     task = models.ForeignKey(Task)
     user = models.ForeignKey(User)
     role = models.ForeignKey(Role)
-    effort = models.BigIntegerFIeld(null=True)
+    effort = models.BigIntegerField(null=True)
     def __unicode__(self):
             return self.task.project.name+':'+self.task.name+' '+self.user.username
 

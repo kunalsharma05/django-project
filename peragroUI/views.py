@@ -251,7 +251,8 @@ def ganttview(request, pid):
 		task_data['canWrite']=x.can_write
 		task_data['start'] = int(time.mktime(x.start.timetuple())*1000)
 		task_data['end']= int(time.mktime(x.end.timetuple())*1000)
-		task_data['duration']=
+		dt = x.end-x.start
+		task_data['duration']= dt.days
 		task_data['startIsMilestone']= x.start_is_milestone
 		task_data['endIsMilestone']= x.end_is_milestone
 		task_data['depends']=x.depends
