@@ -265,7 +265,10 @@ class Task(TaskMixin, models.Model):
 
     start_is_milestone = models.BooleanField(default=False)
     end_is_milestone = models.BooleanField(default=False)
-    canwrite = models.BooleanField(default=True)
+    can_write = models.BooleanField(default=True)
+    has_child = models.BooleanField(default=False)
+    depends = models.CharField(max_length=256,blank=True,null=True)
+    collapsed = models.BooleanField(default=False)
     # milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
     component = ChainedForeignKey(Component, chained_field="project", chained_model_field="project", verbose_name=_('component'))
 
@@ -282,10 +285,11 @@ class Role(models.Model):
     def __unicode__(self):
         return self.project.name+':'+self.name
 
-class Resource(models.Model):
+class AssignedResource_Relation(models.Model):
     task = models.ForeignKey(Task)
     user = models.ForeignKey(User)
-
+    role = models.ForeignKey(Role)
+    effort = models.BigIntegerFIeld(null=True)
     def __unicode__(self):
             return self.task.project.name+':'+self.task.name+' '+self.user.username
 

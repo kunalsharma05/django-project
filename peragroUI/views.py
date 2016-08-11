@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import os
+import time
 import tempfile
 from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.models import ContentType
@@ -234,8 +235,40 @@ def media_view(request, mid):
 
 @csrf_exempt
 @login_required	
-def ganttview(request):
-	return render(request, 'gantt.html')
+def ganttview(request, pid):
+	project = Project.objects.get(id = pid)
+	data = {}
+	data['tasks']=[]
+	tasks = Task.objects.filter(project=project)
+	for x in tasks:
+		task_data = {}
+		task_data['sex']='female'
+		task_data['id']=x.id
+		task_data['name']=x.name
+		task_data['code']=x.code
+		task_data['level']=x.level
+		task_data['status']=x.status
+		task_data['canWrite']=x.can_write
+		task_data['start'] = int(time.mktime(x.start.timetuple())*1000)
+		task_data['end']= int(time.mktime(x.end.timetuple())*1000)
+		task_data['duration']=
+		task_data['startIsMilestone']= x.start_is_milestone
+		task_data['endIsMilestone']= x.end_is_milestone
+		task_data['depends']=x.depends
+		task_data['collapsed']=x.collapsed
+		task_data['hasChild']=x.haschild
+		assig_list=[]
+		for y in AssignedResource_Relation.objects.filter(task=x):
+			assig_dict={}
+			assig_dict['resourceId']=y.user.id
+			assig_dict['id']=y.id
+			assig_dict['roleId']=y.role.id
+			assig_dict['effort']=y.effort
+			assig_list.append(assig_dict)
+		task_data['assigs']= assig_list
+		data['tasks'].append(task_data)
+
+	return JsonResponse(data)
 # @login_required
 # @csrf_exempt
 # def media_image(request):
