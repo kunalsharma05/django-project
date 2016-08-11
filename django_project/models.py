@@ -265,10 +265,7 @@ class Task(TaskMixin, models.Model):
 
     start_is_milestone = models.BooleanField(default=False)
     end_is_milestone = models.BooleanField(default=False)
-
-    assignees = ManyToManyField(User)
-
-
+    canwrite = models.BooleanField(default=True)
     # milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
     component = ChainedForeignKey(Component, chained_field="project", chained_model_field="project", verbose_name=_('component'))
 

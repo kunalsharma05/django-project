@@ -25,7 +25,7 @@ projects_router.register(r'tasktypes', views.TaskTypeViewSet, base_name='project
 projects_router.register(r'priorities', views.PriorityViewSet, base_name='projects-priority', parents_query_lookups=['project'])
 projects_router.register(r'statuses', views.StatusViewSet, base_name='projects-status', parents_query_lookups=['project'])
 
-milestones_router.register(r'tasks', views.TaskViewSet, base_name='milestones-task', parents_query_lookups=['milestone'])
+# milestones_router.register(r'tasks', views.TaskViewSet, base_name='milestones-task', parents_query_lookups=['milestone'])
 
 users_router.register(r'tasks', views.TaskViewSet, base_name='users-task', parents_query_lookups=['owner'])
 users_router.register(r'projects', views.ProjectViewSet, base_name='users-project', parents_query_lookups=['members'])

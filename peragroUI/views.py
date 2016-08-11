@@ -232,6 +232,10 @@ def media_view(request, mid):
 	} 
 	return render(request, 'media_image.html', context)
 
+@csrf_exempt
+@login_required	
+def ganttview(request):
+	return render(request, 'gantt.html')
 # @login_required
 # @csrf_exempt
 # def media_image(request):
