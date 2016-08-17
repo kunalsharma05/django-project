@@ -1,5 +1,5 @@
 {% load staticfiles %}
-
+   
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -49,7 +49,7 @@
 
 <div id="taZone" style="display:none;" class="noprint">
    <textarea rows="8" cols="150" id="ta">
-     {"tasks":[
+<!--      {"tasks":[
      {"sex":"female","id":-1,"name":"Gantt editor","code":"","level":0,"status":"Delayed","canWrite":true,"start":1396994800000,"duration":21,"end":1399672799999,"startIsMilestone":true,"endIsMilestone":false,"collapsed":false,"assigs":[],"hasChild":true},
      {"sex":"female","id":-2,"name":"coding","code":"","level":1,"status":"STATUS_ACTIVE","canWrite":true,"start":1396994400000,"duration":10,"end":1398203999999,"startIsMilestone":false,"endIsMilestone":false,"collapsed":false,"assigs":[],"description":"","progress":0,"hasChild":true},
      {"sex":"female","id":-3,"name":"gantt part","code":"","level":2,"status":"STATUS_ACTIVE","canWrite":true,"start":1396994400000,"duration":2,"end":1397167199999,"startIsMilestone":false,"endIsMilestone":false,"collapsed":false,"assigs":[],"depends":"","hasChild":false},
@@ -58,7 +58,7 @@
      {"sex":"female","id":-6,"name":"test on safari","code":"","level":2,"status":"STATUS_SUSPENDED","canWrite":true,"start":1398981600000,"duration":2,"end":1399327199999,"startIsMilestone":false,"endIsMilestone":false,"collapsed":false,"assigs":[],"depends":"","hasChild":false},
      {"sex":"female","id":-7,"name":"test on ie","code":"","level":2,"status":"STATUS_SUSPENDED","canWrite":true,"start":1399327200000,"duration":3,"end":1399586399999,"startIsMilestone":false,"endIsMilestone":false,"collapsed":false,"assigs":[],"depends":"6","hasChild":false},
      {"sex":"female","id":-8,"name":"test on chrome","code":"","level":2,"status":"STATUS_SUSPENDED","canWrite":true,"start":1399327200000,"duration":2,"end":1399499999999,"startIsMilestone":false,"endIsMilestone":false,"collapsed":false,"assigs":[],"depends":"6","hasChild":false}
-     ],"selectedRow":0,"canWrite":true,"canWriteOnParent":true}
+     ],"selectedRow":0,"canWrite":true,"canWriteOnParent":true} -->
    </textarea>
 
   <button onclick="loadGanttFromServer();">load</button>
@@ -144,33 +144,38 @@ $(function() {
 });
 
 
-function loadGanttFromServer(taskId, callback) {
+function loadGanttFromServer() {
 
+  $.ajax({
+    dataType: 'json',
+    method: 'GET',
+    url: '../../gantt_data/{{id}}',
+    // data: data,
+    // success: success
+    
+    success : function(data) {
+      // prof.stop();
+      ge.loadProject(data);
+      ge.checkpoint(); //empty the undo stack
+  
+    }
+    });
   //this is a simulation: load data from the local storage if you have already played with the demo or a textarea with starting demo data
-  loadFromLocalStorage();
+  // loadFromLocalStorage();
 
   //this is the real implementation
-  /*
+  
   //var taskId = $("#taskSelector").val();
-  var prof = new Profiler("loadServerSide");
-  prof.reset();
+  // var prof = new Profiler("loadServerSide");
+  // prof.reset();
 
-  $.getJSON("ganttAjaxController.jsp", {CM:"LOADPROJECT",taskId:taskId}, function(response) {
+  // $.getJSON("ganttAjaxController.jsp", {CM:"LOADPROJECT",taskId:taskId}, function(response) {
     //console.debug(response);
-    if (response.ok) {
-      prof.stop();
-      ge.loadProject(response.project);
-      ge.checkpoint(); //empty the undo stack
+    // if (response.ok) {
+      
+  };
+  
 
-      if (typeof(callback)=="function") {
-        callback(response);
-      }
-    } else {
-      jsonErrorHandling(response);
-    }
-  });
-  */
-}
 
 
 function saveGanttOnServer() {
@@ -179,12 +184,14 @@ function saveGanttOnServer() {
 
 
   //this is a simulation: save data to the local storage or to the textarea
-  saveInLocalStorage();
+  // saveInLocalStorage();
 
 
-  /*
+  
   var prj = ge.saveProject();
-
+  // console.log(prj);
+ var abc = {project:JSON.stringify(prj)};
+ console.log(abc);
   delete prj.resources;
   delete prj.roles;
 
@@ -197,16 +204,18 @@ function saveGanttOnServer() {
     }
   }
 
-  $.ajax("ganttAjaxController.jsp", {
-    dataType:"json",
-    data: {CM:"SVPROJECT",prj:JSON.stringify(prj)},
-    type:"POST",
+  $.ajax({
+    url:'../../gantt_data/{{id}}/',
+    dataType: 'json',
+    data: {project:JSON.stringify(prj)},
+    type:'POST',
 
     success: function(response) {
-      if (response.ok) {
+    	console.log(response);
+      if (response) {
         prof.stop();
-        if (response.project) {
-          ge.loadProject(response.project); //must reload as "tmp_" ids are now the good ones
+        if (response.data) {
+          ge.loadProject(response.data); //must reload as "tmp_" ids are now the good ones
         } else {
           ge.reset();
         }
@@ -216,16 +225,17 @@ function saveGanttOnServer() {
           errMsg=errMsg+response.message+"\n";
         }
 
-        if (response.errorMessages.length) {
-          errMsg += response.errorMessages.join("\n");
-        }
+      
 
         alert(errMsg);
       }
+    },
+    error: function(balh) {
+    	console.log("error");
     }
 
   });
-  */
+  
 }
 
 
@@ -301,51 +311,51 @@ function getFile() {
 
 
 //-------------------------------------------  LOCAL STORAGE MANAGEMENT (for this demo only) ------------------------------------------------------
-Storage.prototype.setObject = function(key, value) {
-  this.setItem(key, JSON.stringify(value));
-};
+// Storage.prototype.setObject = function(key, value) {
+//   this.setItem(key, JSON.stringify(value));
+// };
 
 
-Storage.prototype.getObject = function(key) {
-  return this.getItem(key) && JSON.parse(this.getItem(key));
-};
+// Storage.prototype.getObject = function(key) {
+//   return this.getItem(key) && JSON.parse(this.getItem(key));
+// };
 
 
-function loadFromLocalStorage() {
-  var ret;
-  if (localStorage) {
-    if (localStorage.getObject("teamworkGantDemo")) {
-      ret = localStorage.getObject("teamworkGantDemo");
-    }
-  } else {
-    $("#taZone").show();
-    console.log("poop");
-  }
-  if (!ret || !ret.tasks || ret.tasks.length == 0){
-    abc = $("#ta").val();
-    ret = JSON.parse($("#ta").val());
+// function loadFromLocalStorage() {
+//   var ret;
+//   if (localStorage) {
+//     if (localStorage.getObject("teamworkGantDemo")) {
+//       ret = localStorage.getObject("teamworkGantDemo");
+//     }
+//   } else {
+//     $("#taZone").show();
+//     console.log("poop");
+//   }
+//   if (!ret || !ret.tasks || ret.tasks.length == 0){
+//     abc = $("#ta").val();
+//     ret = JSON.parse($("#ta").val());
 
 
-    //actualiza data
-    var offset=new Date().getTime()-ret.tasks[0].start;
-    for (var i=0;i<ret.tasks.length;i++)
-      ret.tasks[i].start=ret.tasks[i].start+offset;
+//     //actualiza data
+//     var offset=new Date().getTime()-ret.tasks[0].start;
+//     for (var i=0;i<ret.tasks.length;i++)
+//       ret.tasks[i].start=ret.tasks[i].start+offset;
 
 
-  }
-  ge.loadProject(ret);
-  ge.checkpoint(); //empty the undo stack
-}
+//   }
+//   ge.loadProject(ret);
+//   ge.checkpoint(); //empty the undo stack
+// }
 
 
-function saveInLocalStorage() {
-  var prj = ge.saveProject();
-  if (localStorage) {
-    localStorage.setObject("teamworkGantDemo", prj);
-  } else {
-    $("#ta").val(JSON.stringify(prj));
-  }
-}
+// function saveInLocalStorage() {
+//   var prj = ge.saveProject();
+//   if (localStorage) {
+//     localStorage.setObject("teamworkGantDemo", prj);
+//   } else {
+//     $("#ta").val(JSON.stringify(prj));
+//   }
+// }
 
 
 //-------------------------------------------  Open a black popup for managing resources. This is only an axample of implementation (usually resources come from server) ------------------------------------------------------

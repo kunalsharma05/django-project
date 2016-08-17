@@ -1,0 +1,544 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title></title>
+
+    <!-- Bootstrap -->
+     <link href="{% static 'peragroUI/css/vendors/bootstrap/dist/css/bootstrap.min.css' %}" type="text/css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="{% static 'peragroUI/css/vendors/font-awesome/css/font-awesome.min.css' %}" type="text/css" rel="stylesheet" />
+
+    <!-- <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet"> -->
+    <!-- Animate.css -->
+    
+    <link href="https://colorlib.com/polygon/gentelella/css/animate.min.css" rel="stylesheet">
+
+
+    <link href="{% static 'peragroUI/css/custom.css' %}" rel="stylesheet" type="text/css" />
+<!--     <link href="{% static 'peragroUI/css/peargro.css' %}" rel="stylesheet" type="text/css" />
+ -->    
+    <!-- jQuery -->
+   <script src="{% static 'peragroUI/css/vendors/jquery/dist/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'peragroUI/css/vendors/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'peragroUI/css/vendors/fastclick/lib/fastclick.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static 'peragroUI/css/vendors/nprogress/nprogress.js' %}"></script>
+    <!-- morris.js -->
+    <script src="{% static 'peragroUI/css/vendors/raphael/raphael.min.js' %}"></script>
+    <script src="{% static 'peragroUI/css/vendors/morris.js/morris.min.js' %}"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="{% static 'peragroUI/css/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{% static 'peragroUI/js/moment/moment.min.js' %}"></script>
+    <script src="{% static 'peragroUI/js/datepicker/daterangepicker.js' %}"></script>
+
+<!--     FabricJS
+ -->    <script src="{% static 'peragroUI/build/js/fabric.min.js' %}"></script>
+    
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'peragroUI/build/js/custom.min.js' %}"></script>
+        <!-- <script src="{% static 'peragroUI/build/js/annotation-video.js' %}"></script> -->
+  <link href="http://vjs.zencdn.net/5.8.8/video-js.css" rel="stylesheet">
+
+  <!-- If you'd like to support IE8 -->
+  <script src="http://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
+  <script src="http://vjs.zencdn.net/5.8.8/video.js"></script>
+
+  </head>
+<!--  -->
+ <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="row" stlye="background:738B8C">
+        <div class="col-md-9">
+         <div class="clearfix"></div>
+         <div class="x_panel">         
+                  <div class="x_content" style="text-align: center;">
+                  <button id="annotate" data-toggle="modal" data-target="#annotation_modal" href="" class="btn btn-success" ><i class="fa fa-edit m-right-xs"></i>Annotate</button>
+                      
+<!--                       <button id="clear-canvas" class="btn btn-info">Clear Canvas</button><br>
+        <button id="get-json" class="btn btn-info">Get JSON</button><br>
+         <label for="drawing-color">Line color:</label>
+            <input type="color" value="#f55f55" id="color-select">
+          <label for="drawing-line-width">Line width:</label>
+           <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
+ -->
+        <h2 id='media-name'>{{media_ob.media.name}}</h2>
+        <p>
+        Assets: {{file_descr.assets}}
+        {% for x in file_descr.assets %}
+        Dependencies: {{x.dependencies}}
+        {% endfor %}
+        </p>
+
+
+
+<!-- <video controls>
+    <source src="../{{media_ob.media.name}}"></source></video>
+ -->
+
+
+
+
+        <div class="jumbotron" id="image-view" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
+
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="264"
+    poster="MY_VIDEO_POSTER.jpg" data-setup="{}">
+      <source src="../{{media_ob.media.name}}" type='video/mp4'>
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser that
+        <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+      </p>
+    </video>
+        <!-- <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3> -->
+        <!-- 
+        <button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
+        <button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
+        <button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br> -->
+
+                  </div>
+                </div>
+              </div>
+            
+
+          <div class="col-md-3">
+            <div class="x_panel">
+              <!-- /menu profile quick info -->
+              <div class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
+
+                            <!-- start recent activity -->
+                            <ul class="messages">
+                              {% for x in comments %}
+                              <li>
+                                <img src="{{x.author.profile.profile_pic.url}}" class="avatar" alt="Avatar">
+                                <div class="message_date">
+                                  <h4 class="date text-info"></h4>
+                                  <p class="month"></p>
+                                </div>
+                                <div class="message_wrapper">
+                                  <h4 class="heading">{{x.author.username}}</h4>
+                                  <blockquote class="message" style="font-size: 12px;"><p>{{x.comment}}</p></blockquote>
+                                  <br />
+                                  <button id = "{{x.id}}{{x.author}}" style="display:none;" class="xyz"></button>
+                                  {% if x.annotation %}
+                                  <p class="url">
+                                    <canvas class="lower-canvas" id="{{x.id}}" anno="{{x.annotation}}" style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas>
+                                     <!-- <canvas id="c1{{x.id}}" style="border:1px solid black;" ></canvas> -->
+                                    </br>
+					<!-- <canvas id="my_canvas_id"></canvas>  -->
+                                    <!-- <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a> -->
+                                  </p>
+                                  {% endif %}
+                                </div>
+                             
+                              </li>
+                                
+                                 {% endfor %}                             
+                              <li>
+                                <img src="{{user.profile.profile_pic.url}}" class="avatar" alt="Avatar">
+                              <div class="message_date">
+                                  <h4 class="heading"></h4>
+                                  <p id="com_date" class="month"></p>
+                                </div>
+                              <div class="message_wrapper">
+                                  <h4 class="heading">{{user.username}}</h4>
+                                  <form id="only-text" action="." method="POST">
+                                  <textarea style="width: 100%" name="comm-text" form="only-text"></textarea>
+                                  <input type="submit" value="Comment" />
+                                  </form>
+                              </li>
+                            </ul>
+                            <!-- end recent activity -->
+
+                          </div> 
+              </div>
+
+              <!-- sidebar menu -->
+                        </div>
+          </div>
+    </div>
+    </div>
+        <!-- top navigation -->
+        <!-- <div class="top_nav">
+          <div class="nav_menu">
+            <nav class="" role="navigation">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <img src="images/img.jpg" alt="">{{user.first_name}} {{user.last_name}}
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="javascript:;"> Profile</a></li>
+                    <li>
+                      <a href="javascript:;">
+                        <span class="badge bg-red pull-right">50%</span>
+                        <span>Settings</span>
+                      </a>
+                    </li>
+                    <li><a href="javascript:;">Help</a></li>
+                    <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
+                  </ul>
+                </li>
+ -->
+                <!--  FOR THE NOTIFICATIONS MODULE
+                <li role="presentation" class="dropdown">
+                  <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="badge bg-green">6</span>
+                  </a>
+                  <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                    <li>
+                      <a>
+                        <span class="image"><img src="images/img.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time"></span>
+                        </span>
+                        <span class="message">
+                          
+                        </span>
+                      </a>
+                    </li> -->
+                    <!-- <li>
+                      <div class="text-center">
+                        <a>
+                          <strong>See All Alerts</strong>
+                          <i class="fa fa-angle-right"></i>
+                        </a>
+                      </div>
+                    </li> -->
+                  <!-- </ul> -->
+                <!-- </li> -->
+<!--               </ul>
+            </nav>
+          </div>
+        </div>
+ -->        <!-- /top navigation -->
+
+        <!-- page content -->
+        
+        <!-- /page content -->
+<div id="annotation_modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg" id="style-modal">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel"  style="padding:6px;">
+                  <div class="x_title">
+                    <h2>Annotation Panel</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                    <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <table>
+
+                    <tr><td><button id="clear-canvas" class="btn btn-info">Clear Canvas</button></td>
+                    <td><button id="insert-text" class="btn btn-info">Insert Text</button></td>
+        <!-- <button id="get-json" class="btn btn-info">Get JSON</button><br> -->
+         <td><label for="drawing-color">Line color:</label>
+            <input type="color" value="#f55f55" id="color-select"></td>
+            </tr>
+            <tr>
+          <td><label for="drawing-line-width">Line width:</label>
+           <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select">
+</td>
+</tr></table>
+        <h2>Canvas for Annotations</h2>
+
+            
+        <!-- <div class="jumbotron" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> --><canvas class="lower-canvas" id="d"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas><!-- </div> -->
+
+        <!-- <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3> -->
+        </br>
+        </br>
+        <form id="commForm" action="." method="POST">
+    <img src="{{user.profile.profile_pic.url}}" class="avatar" alt="Avatar">
+                              <!-- <div class="message_date"> -->
+                                  <h4 class="heading">{{user.username}}</h4>
+           <textarea style="width: 100%" form="commForm" name="comm-text"></textarea>
+
+        <input type="hidden" id="inp-data" name="json-data" />
+        </form>
+        <button id="comment" class="btn btn-info">Comment</button><br>
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
+</div>
+        <!-- footer content -->
+        <footer style="margin-left:0px">
+          <div class="pull-right pull-bottom">
+            Digital Assets Managed Neatly
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+
+<!-- 
+<button id='poop'>hi</button> -->
+<!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> -->
+<script>
+// var a = ;
+document.getElementById('annotate').onclick = (function(){
+
+
+      var video_div  = document.getElementById('my-video');
+      var video = video_div.getElementsByTagName('video')[0];
+      video.setAttribute('crossOrigin', 'anonymous'); 
+      var b = document.createElement('canvas');
+      b.width  = video.videoWidth;
+      b.height = video.videoHeight;
+      var ctx = b.getContext('2d');
+
+      ctx.drawImage(video, 0, 0);
+      var imgData = b.toDataURL(0,0,b.width,b.height);
+ 
+      var canvas = this.__canvas = new fabric.Canvas('d', {
+          isDrawingMode: true
+      });
+
+// console.log(canvas);
+      fabric.util.loadImage(imgData, function(img) {
+        var oImg = new fabric.Image(img);
+        if((oImg.width) >= 1300){
+          old_width = oImg.width;
+          old_height = oImg.height;
+          a_ratio = old_height/old_width;
+          oImg.style.height = (1300*a_ratio)+'px';
+          oImgs.style.width = '1300px'
+        }
+  // canvas.setBackgroundImage(oImg, canvas.renderAll.bind(canvas), {
+  // // Needed to position backgroundImage at 0/0
+  // originX: 'left',
+  // originY: 'top'
+  // });
+  // var test = canvas.toDataURL();
+  // console.log(test);
+        canvas.add(oImg);
+        canvas.setWidth(oImg.width);
+        canvas.setHeight(oImg.height);
+        var div_modal = document.getElementById('style-modal');
+        div_modal.style.width = (oImg.width+22)+'px';
+        canvas.freeDrawingBrush.color = "#000";
+        canvas.freeDrawingBrush.width = 5;
+        // oImg.scale(0.2).set({
+        //     left: 100,
+        //     top: 100,
+        // });
+        canvas.add(oImg);
+      });
+      // console.log(b.width);
+    var colorselector = document.getElementById('color-select');
+    var widthselector = document.getElementById('width-select');
+    var clearCanvas = document.getElementById('clear-canvas');
+    var widthdisplay = document.getElementById('width');
+    var inserttext = document.getElementById('insert-text');
+    var flag = 0;
+    colorselector.onchange = function() {
+      canvas.freeDrawingBrush.color = this.value;
+    };
+
+    widthselector.onchange = function() {
+      canvas.freeDrawingBrush.width = parseInt(widthselector.value, 10) || 1;
+      widthdisplay.innerHTML = widthselector.value;
+    };
+
+
+  // getJson.onclick = function() { 
+  //   console.log(JSON.stringify(canvas));
+  //   setJson.innerHTML = JSON.stringify(canvas);
+  //   console.log("----------------------------------");
+  //   };    
+  
+
+    document.getElementById('comment').onclick = (function(e) {
+      e.preventDefault();
+    // var data = new FormData();
+    // jwidth = canvas.width;
+    // jheight = canvas.height;
+    // if ((canvas.width) >= 300){
+    //   var jratio = (canvas.height)/(canvas.width);
+    //   var jwidth = 300;
+    //   var jheight = 300*jratio;
+    // }
+      var jdata = JSON.stringify(canvas);
+
+    // console.log(JSON.stringify(canvas));
+      document.getElementById('inp-data').value = jdata;
+
+    // data.append('description', document.getElementById('input[name="description"]').val());
+    // data.append('json-data', document.getElementById('inp-data').value);
+
+    // console.log(data);
+      if(document.getElementById('inp-data').value == jdata){
+          document.getElementById("commForm").submit();
+       }
+    });
+  // if(document.getElementById('input[name=fname]').val() == '') {
+  //  document.getElementById('input[name="fname"]').addClass('has-error'); }
+  // if(document.getElementById('select[name="lname"]' ).val() == '') {
+  //  document.getElementById('select[name="lname"]').addClass('has-error'); }
+  // else {
+    // $.ajax({
+    //     url: '.',
+    //     type: 'POST',
+    //     data: jdata,
+    //     cache: false,
+    //     // dataType: 'html',
+    //     processData: false,
+    //     contentType: false,
+    //     success: function(data)
+    //     {
+    //         if(data=='done')
+    //           window.location.href=".";
+    //     }
+    // }); 
+// }
+
+
+  clearCanvas.onclick = function() { 
+    canvas.clear();
+    add_canvas();
+  };
+  
+  // clearSerialOutput.onclick = function() { 
+  //   setJson.innerHTML = "";
+  //   };
+
+  // deserialize.onclick = function() {
+  //   canvas.loadFromJSON(setJson.innerHTML,canvas.renderAll.bind(canvas));
+  // };
+  
+  inserttext.onclick = function() {
+    if (flag == 0){
+      flag = 1;
+      inserttext.innerHTML = "Insert Text ON";
+      console.log(flag);
+      canvas.isDrawingMode = !canvas.isDrawingMode;
+      }
+    else if (flag == 1){
+      flag = 0;
+      inserttext.innerHTML = "Insert Text OFF";
+        console.log(flag);
+        canvas.isDrawingMode = !canvas.isDrawingMode;
+    }
+  };
+
+  
+  canvas.on('mouse:down', function(options) {
+    if(flag == 1) {
+      if (options.target == null){ 
+          addText(options.e);
+          console.log(flag);
+        }
+      }
+    });
+
+
+  function addText(e) {
+
+    var custontxt=new fabric.IText('Start Typing', { 
+      fontFamily: 'helvetica',
+      fontSize:30,
+      fontWeight:400,
+      fill:'red', 
+      fontStyle: 'normal', 
+      top:e.offsetY,
+      cursorDuration:500,    
+      left:e.offsetX,   
+    });  
+    canvas.add(custontxt);
+    custontxt.enterEditing();
+    }
+ 
+
+
+
+
+ {% for x in comments %}
+                                  document.getElementById('{{x.id}}{{x.author}}').onclick = (function () {
+
+console.log('boob');
+    
+                                  		var cv_anno = $('#{{x.id}}');
+                                  		var anno = String(cv_anno.attr('anno'));
+									    // var canvas = new fabric.Canvas('{{x.id}}');
+										// canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas));
+										            // var video_div  = document.getElementById('my-video');
+                                 // var video = video_div.getElementsByTagName('video')[0];
+									    // var a = document.getElementById('d');
+                      // console.log(a.width);
+										              var old_width = b.width;
+    	                                var old_height = b.height;
+        	                            var scale = 300.00/old_width;
+                                    
+                	                   // canvas.setWidth(old_width);
+            	                       // canvas.setHeight(old_height);
+
+									    // var scale = 0.5;
+									    var canvas1 = new fabric.Canvas('{{x.id}}');
+									    canvas1.setDimensions({
+									        "width": old_width * scale,
+									        "height": old_height * scale
+									    })
+									    // var json = localStorage.getItem('save');
+									    canvas1.loadFromJSON(anno, function () {
+									        canvas1.renderAll();
+									    });
+									    canvas1.setZoom(scale);
+									    canvas1.renderAll();
+									  });
+   
+ {% endfor %}
+
+var el = document.getElementsByClassName('xyz');
+for (var i=0;i<el.length; i++) {
+    el[i].click();
+}
+
+});
+    
+
+
+
+
+
+
+
+// var a = new fabric.image(img);
+
+
+                  
+</script>    
+    
+<!--     
+<script type="text/javascript">
+	window.onload = function(){
+	
+};
+</script>
+ -->
+
+                                
+  </body>
+</html>

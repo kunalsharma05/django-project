@@ -13,7 +13,7 @@ from django_project.models import TaskType
 from django_project.models import ObjectTask
 from django_project.models import Profile
 from django_project.models import MediaUpload
-# from django_project.models import AssetsMedia
+from django_project.models import AssignedResource_Relation, Role
 # from django_project.models import DependenciesRelation
 from django_project.models import Status
 from django_project.models import Transition
@@ -30,35 +30,35 @@ class StatusAdmin(admin.ModelAdmin):
     #readonly_fields = ['project']
 
 
-class TaskAdmin(VersionAdmin):           #milestone removed , 'milestone'
-    list_display = ( 'project', 'component', 'id', 'summary',
-        'created_at', 'author', 'owner', 'status', 'priority', 'type', 'nr_of_versions')
-    list_display_links = ('summary',)
-    list_filter = ('project',)
-    date_hierarchy = 'created_at'
-    save_on_top = True
-    search_fields = ['id', 'summary', 'description']
+# class TaskAdmin(VersionAdmin):           #milestone removed , 'milestone'
+#     list_display = ( 'project', 'component', 'id', 'summary',
+#         'created_at', 'author', 'owner', 'status', 'priority', 'type', 'nr_of_versions')
+#     list_display_links = ('summary',)
+#     list_filter = ('project',)
+#     date_hierarchy = 'created_at'
+#     save_on_top = True
+#     search_fields = ['id', 'summary', 'description']
 
-    fieldsets = (
-        (_("Task detail"), {
-            'fields': (
-                'summary',
-                ('project', 'component'),
-                'description',
-                'status',
-                'priority',
-                'type',
-                'owner',
-                'deadline',
-            )
-        }),
-        (_("Author & editor"), {
-            #'classes': ['collapsed collapse-toggle'],
-            'fields': (
-                ('author', ),
-            ),
-        }),
-    )
+#     fieldsets = (
+#         (_("Task detail"), {
+#             'fields': (
+#                 'summary',
+#                 ('project', 'component'),
+#                 'description',
+#                 'status',
+#                 'priority',
+#                 'type',
+#                 'owner',
+#                 # 'deadline',
+#             )
+#         }),
+#         (_("Author & editor"), {
+#             #'classes': ['collapsed collapse-toggle'],
+#             'fields': (
+#                 ('author', ),
+#             ),
+#         }),
+#     )
 
     # This option would be used from Django 1.2
     #readonly_fields = ('author_ip', 'editor_ip')
@@ -109,7 +109,7 @@ admin.site.register(Status, StatusAdmin)
 
 admin.site.register(Priority, OrderedDictModelAdmin)
 admin.site.register(TaskType, TaskTypeAdmin)
-admin.site.register(Task, TaskAdmin)
+admin.site.register(Task)
 admin.site.register(ObjectTask)
 admin.site.register(Project)
 admin.site.register(Membership)
@@ -121,3 +121,5 @@ admin.site.register(MediaUpload)
 # admin.site.register(DependenciesRelation)
 admin.site.register(Comment)
 # admin.site.register(Annotation)
+admin.site.register(Role)
+admin.site.register(AssignedResource_Relation)

@@ -544,6 +544,7 @@ GanttMaster.prototype.saveProject = function () {
 GanttMaster.prototype.saveGantt = function (forTransaction) {
   //var prof = new Profiler("gm_saveGantt");
   var saved = [];
+  // var a = this.tasks;
   for (var i = 0; i < this.tasks.length; i++) {
     var task = this.tasks[i];
     var cloned = task.clone();
@@ -553,22 +554,22 @@ GanttMaster.prototype.saveGantt = function (forTransaction) {
 
     saved.push(cloned);
   }
-
+  // console.log(a);
   var ret = {tasks:saved};
-  if (this.currentTask) {
-    ret.selectedRow = this.currentTask.getRow();
-  }
+  // if (this.currentTask) {
+    // ret.selectedRow = this.currentTask.getRow();
+  // }
 
-  ret.deletedTaskIds = this.deletedTaskIds;  //this must be consistent with transactions and undo
+  // ret.deletedTaskIds = this.deletedTaskIds;  //this must be consistent with transactions and undo
 
-  if (!forTransaction) {
-    ret.resources = this.resources;
-    ret.roles = this.roles;
-    ret.canWrite = this.canWrite;
-    ret.canWriteOnParent = this.canWriteOnParent;
-    ret.splitterPosition=this.splitter.perc;
-    ret.zoom=this.gantt.zoom;
-  }
+  // if (!forTransaction) {
+    // ret.resources = this.resources;
+    // ret.roles = this.roles;
+    // ret.canWrite = this.canWrite;
+    // ret.canWriteOnParent = this.canWriteOnParent;
+    // ret.splitterPosition=this.splitter.perc;
+    // ret.zoom=this.gantt.zoom;
+  // }
 
   //prof.stop();
   return ret;

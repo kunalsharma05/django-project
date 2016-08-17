@@ -27,7 +27,7 @@ from django.http import JsonResponse
 from example_project.settings import *
 from django_project import serializers
 from django_project import models
-
+import datetime
 from django_project import signals
 from django_project import filters as dp_filters
 from exceptions import *
@@ -35,7 +35,7 @@ from damn_at import Analyzer, FileDescription, FileId, mimetypes
 from damn_at.analyzer import *
 from damn_at.utilities import *
 from damn_at.analyzer import AnalyzerException
-
+import ast
 # def home(request):
 #     return render(request,'login.html')
 @csrf_exempt
@@ -179,6 +179,7 @@ def project_page(request, author_name, project_slug):
 			path = os.path.join(MEDIA_ROOT, media_ob.media.name)
 			media_ob.mimetype = mimetypes.guess_type(path, False)[0]
 			file_descr = analyzer.analyze_file(path)
+			print(file_descr)
 			file_descr.hash = calculate_hash_for_file(path)
 			media_ob.file_description = file_descr
 			media_ob.hash = file_descr.hash
@@ -215,7 +216,16 @@ def media_view(request, mid):
 	comment_content_type = ContentType.objects.get_for_model(media_ob)
 	comments = Comment.objects.filter(content_type__pk=comment_content_type.id, object_pk=str(mid))
 	
+	# if media_ob.mimetype == 'image/jpeg':
 
+	context = {
+		'mdesc':mdesc,
+		'file_descr':file_descr,
+		'media_ob':media_ob,
+		'comments':comments,
+		'user':request.user,
+	} 
+	return render(request, 'media_video.html', context)
 
 	# clist = []
 	# for x in comments:
@@ -224,28 +234,77 @@ def media_view(request, mid):
 	# 	clist.append(x, user_profile)
 	#  fileid = FileId(filename=os.path.abspath(an_uri))
 	# file_descr = FileDescription(file=fileid)
-	context = {
-		'mdesc':mdesc,
-		'file_descr':file_descr,
-		'media_ob':media_ob,
-		'comments':comments,
-		'user':request.user,
-	} 
-	return render(request, 'media_image.html', context)
 
 @csrf_exempt
 @login_required	
-def ganttview(request, pid):
+def get_gantt_data(request, pid):
+	# print('hi')
 	project = Project.objects.get(id = pid)
+	tasks = Task.objects.filter(project=project)
+	if request.method=='POST':
+	# try:
+		# post_data =request.GET
+		# print(post_data)
+	# except:	
+		# print('poop')
+		p_data = json.loads(request.POST['project'])
+		for x in p_data['tasks']:
+			for y in tasks:
+				if y.id == x['id']:
+					y.name = x['name']
+					y.short_name=x['code']
+					y.level=x['level']
+					y.status=x['status']
+					y.can_write=x['canWrite']
+					y.start = datetime.fromtimestamp(int(x['start'])/1000).strftime('%Y-%m-%d')
+					y.end = datetime.fromtimestamp(int(x['end'])/1000).strftime('%Y-%m-%d')
+					y.start_is_milestone = x['startIsMilestone']
+					y.end_is_milestone = x['endIsMilestone']
+					y.depends = x['depends']
+					y.collapsed = x['collapsed']
+					y.has_child = x['hasChild']
+					y.save()
+					assigned_list = []
+					list_from_json = []
+
+					for a in AssignedResource_Relation.objects.filter(task=y):
+						assigned_list.append(a.id)
+					for i in x['assigs']:
+						list_from_json.append(int(i['id']))
+						if int(i['id']) in assigned_list:
+							z = AssignedResource_Relation.objects.get(id = int(i['id']))
+							z.user = User.objects.get(id = int(i['resourceId']))
+							z.role = Role.objects.get(id = int(i['roleId']))
+							z.effort = i['effort']
+							z.save()
+							# x['assigs'].remove(i)
+						elif int(i['id']) not in assigned_list:
+							z = AssignedResource_Relation()
+							z.task = y
+							z.user = User.objects.get(id = int(i['resourceId']))
+							z.role = Role.objects.get(id = int(i['roleId']))
+							z.effort = i['effort']
+							z.save()
+							# x['assigs'].remove(i)
+					
+					for a in assigned_list:
+						if a not in list_from_json:
+							z = AssignedResource_Relation.objects.get(id = a)
+							z.delete()
+		# return JsonResponse({'status':1})
+	else:
+		pass
+		# for x in post_data['tasks']:
+			# print x['id']
+
 	data = {}
 	data['tasks']=[]
-	tasks = Task.objects.filter(project=project)
 	for x in tasks:
 		task_data = {}
 		task_data['sex']='female'
 		task_data['id']=x.id
 		task_data['name']=x.name
-		task_data['code']=x.code
+		task_data['code']=x.short_name
 		task_data['level']=x.level
 		task_data['status']=x.status
 		task_data['canWrite']=x.can_write
@@ -257,7 +316,7 @@ def ganttview(request, pid):
 		task_data['endIsMilestone']= x.end_is_milestone
 		task_data['depends']=x.depends
 		task_data['collapsed']=x.collapsed
-		task_data['hasChild']=x.haschild
+		task_data['hasChild']=x.has_child
 		assig_list=[]
 		for y in AssignedResource_Relation.objects.filter(task=x):
 			assig_dict={}
@@ -268,8 +327,30 @@ def ganttview(request, pid):
 			assig_list.append(assig_dict)
 		task_data['assigs']= assig_list
 		data['tasks'].append(task_data)
-
+	data['selectedRow']=0
+	data['canWrite']=True
+	data['canWriteOnParent'] = True
+	data['resources'] = []
+	data['roles'] = []
+	resource_users = project.members.all()
+	for y in resource_users:
+		res_dict = {}
+		res_dict['id'] = y.id
+		res_dict['name'] =y.username
+		data['resources'].append(res_dict)
+	roles = Role.objects.filter(project = project)
+	for y in roles:
+		roles_dict = {}
+		roles_dict['id']=y.id
+		roles_dict['name']=y.name
+		data['roles'].append(roles_dict)
 	return JsonResponse(data)
+
+@csrf_exempt
+@login_required	
+def ganttview(request, pid):
+	project = Project.objects.get(id = pid)
+	return render(request,'gantt.html',{'id':pid})	
 # @login_required
 # @csrf_exempt
 # def media_image(request):

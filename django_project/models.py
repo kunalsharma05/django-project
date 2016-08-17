@@ -250,7 +250,7 @@ class Task(TaskMixin, models.Model):
     project = models.ForeignKey(Project, verbose_name=_('project'))
 
     author = models.ForeignKey(User, verbose_name=_('author'), related_name='created_tasks', blank=True)
-
+    
     owner = models.ForeignKey(User, verbose_name=_('owner'), related_name='owned_tasks', null=True, blank=True)
     level = models.IntegerField(null=True)
     summary = models.CharField(_('summary'), max_length=64)
