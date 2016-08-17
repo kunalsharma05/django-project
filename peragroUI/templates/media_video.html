@@ -478,7 +478,6 @@ document.getElementById('annotate').onclick = (function(){
  {% for x in comments %}
                                   document.getElementById('{{x.id}}{{x.author}}').onclick = (function () {
 
-console.log('boob');
     
                                   		var cv_anno = $('#{{x.id}}');
                                   		var anno = String(cv_anno.attr('anno'));
