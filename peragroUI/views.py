@@ -10,6 +10,8 @@ from django.shortcuts import render, render_to_response, redirect
 # from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django_project.models import *
+from peragroUI.models import *
+
 # from events.models import/ EventNew
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -36,6 +38,8 @@ from damn_at.analyzer import *
 from damn_at.utilities import *
 from damn_at.analyzer import AnalyzerException
 import ast
+from actstream import action
+from actstream.models import Action
 # def home(request):
 #     return render(request,'login.html')
 @csrf_exempt
@@ -75,6 +79,7 @@ def dashboard(request, username):
 		if username == self_username:
 			user_profile = Profile.objects.get(pk=self_user)
 			user_membership = Membership.objects.filter(member=self_user)
+			news_feed = Action.objects.all()
 			project_list=[]
 			for x in user_membership:
 				project_list.append(x.project)
@@ -83,6 +88,7 @@ def dashboard(request, username):
 				'user' : self_user,
 				'profile_user_membership':user_membership,
 				'project_list':project_list,
+				'news_feed':news_feed,
 			}
 			return render(request, 'self_dashboard.html', context)   
 	  #   elif allied_ob:
@@ -152,8 +158,9 @@ def project_page(request, author_name, project_slug):
 	project_ob = Project.objects.filter(author = author_ob, slug = project_slug)[0]
 	members_list = project_ob.members.all()
 	project_media = MediaUpload.objects.filter(project=project_ob)
-
-	task_list = Task.objects.filter(project=project_ob)
+	roles = Role.objects.filter(project = project_ob)
+	task_list = TaskUI.objects.filter(project=project_ob)
+	relation_list = AssignedResource_Relation.objects.filter(project = project_ob)
 	
 
 	profile_list = []	
@@ -167,23 +174,81 @@ def project_page(request, author_name, project_slug):
 		'user' : user,
 		'user_project_list':project_list,
 		'project_media':project_media,
+		'roles':roles,
+		'members_list':members_list,
+		'task_list':task_list,
+		'relation_list':relation_list,
 	}
 	if request.method == 'POST':
 		# for x in 
-		media_ob = MediaUpload.objects.create(project=project_ob)
-		media_ob.media = request.FILES['file']
+		if request.POST.get('save_role'):
+			for key in request.POST.iterkeys():
+				if key == 'new_role':
+					if request.POST[key] != "":
+						role = Role()
+						role.name = request.POST[key]
+						role.project = project_ob
+						role.save()
+					else:
+						pass
+				elif key == 'save_role':
+					pass
+				else:
+					role = Role.objects.get(id = int(key))
+					role.name = request.POST[key]
+					role.save()
+		
+		elif request.POST.get('save_relaltion'):
+			for key in request.POST.iterkeys():
+				flag = 0
+				if key in ['new_task','new_role','new_effort','new_user']:
+					if flag == 0:
+						if request.POST[key] != "":	
+							flag = 1
+							rel = AssignedResource_Relation()
+							rel.project = project_ob
+							rel.task = TaskUI.objects.get(id = int(request.POST['new_task']))
+							rel.user = User.objects.get(id = int(request.POST['new_user']))
+							rel.role = Role.objects.get(id = int(request.POST['new_role']))
+							rel.effort = request.POST['new_effort'] 
+							rel.save()
+						else:
+							pass
+					else:
+						pass
+				elif key == 'save_relaltion':
+					pass
+				else:
+					for rel in relation_list:
+						if str(rel.id) == key:
+							rel.task = TaskUI.objects.get(id = int(request.POST[key]))
+							rel.role = Role.objects.get(id = int(request.POST[key+'_role']))
+							rel.user = User.objects.get(id = int(request.POST[key+'_user']))
+							rel.effort = int(request.POST[key+'_effort'])
+							rel.save()
+			# if request.POST.get('save_reelaltion'):
+			return render(request, 'project_page.html', context)
+								# for x in roles:
+			# 	try:
+			# 		role = Role.objects.get(id = int(request.POST[x.id]))
+			# 		role.name = 
+			# 	role.	
+		
+		else:
+			media_ob = MediaUpload.objects.create(project=project_ob)
+			media_ob.media = request.FILES['file']
 		# media_ob.project = project_ob
-		media_ob.save()
-		if media_ob.media.url:
-			analyzer = Analyzer()
-			path = os.path.join(MEDIA_ROOT, media_ob.media.name)
-			media_ob.mimetype = mimetypes.guess_type(path, False)[0]
-			file_descr = analyzer.analyze_file(path)
-			print(file_descr)
-			file_descr.hash = calculate_hash_for_file(path)
-			media_ob.file_description = file_descr
-			media_ob.hash = file_descr.hash
 			media_ob.save()
+			if media_ob.media.url:
+				analyzer = Analyzer()
+				path = os.path.join(MEDIA_ROOT, media_ob.media.name)
+				media_ob.mimetype = mimetypes.guess_type(path, False)[0]
+				file_descr = analyzer.analyze_file(path)
+				print(file_descr)
+				file_descr.hash = calculate_hash_for_file(path)
+				media_ob.file_description = file_descr
+				media_ob.hash = file_descr.hash
+				media_ob.save()
 
 		return HttpResponse('done')
 	else:
@@ -197,7 +262,7 @@ def project_page(request, author_name, project_slug):
 def media_view(request, mid):
 	media_ob = MediaUpload.objects.get(id= mid)
 	if request.method=='POST':
-		comment = Comment()
+		comment = UiComment()
 		comment.author = request.user
 		comment.content_type = ContentType.objects.get_for_model(media_ob)
 		comment.object_pk = mid
@@ -207,6 +272,7 @@ def media_view(request, mid):
 		except:
 			comment.annotation = None
 		comment.save()
+		action.send(request.user, verb='comment on', action_object=comment, target=media_ob)
 		return HttpResponseRedirect('.')
 
 	path = os.path.join(MEDIA_ROOT, media_ob.media.name)
@@ -214,7 +280,7 @@ def media_view(request, mid):
 	file_descr = analyzer.analyze_file(path)
 	mdesc = pretty_print_file_description(file_descr)
 	comment_content_type = ContentType.objects.get_for_model(media_ob)
-	comments = Comment.objects.filter(content_type__pk=comment_content_type.id, object_pk=str(mid))
+	comments = UiComment.objects.filter(content_type__pk=comment_content_type.id, object_pk=str(mid))
 	
 	# if media_ob.mimetype == 'image/jpeg':
 
@@ -240,7 +306,7 @@ def media_view(request, mid):
 def get_gantt_data(request, pid):
 	# print('hi')
 	project = Project.objects.get(id = pid)
-	tasks = Task.objects.filter(project=project)
+	tasks = TaskUI.objects.filter(project=project)
 	if request.method=='POST':
 	# try:
 		# post_data =request.GET
@@ -256,8 +322,9 @@ def get_gantt_data(request, pid):
 					y.level=x['level']
 					y.status=x['status']
 					y.can_write=x['canWrite']
-					y.start = datetime.fromtimestamp(int(x['start'])/1000).strftime('%Y-%m-%d')
-					y.end = datetime.fromtimestamp(int(x['end'])/1000).strftime('%Y-%m-%d')
+					y.start = datetime.fromtimestamp(int(x['start'])/1000).date()
+					y.end = datetime.fromtimestamp(int(x['end'])/1000).date()
+					print(datetime.fromtimestamp(int(x['end'])/1000).date())
 					y.start_is_milestone = x['startIsMilestone']
 					y.end_is_milestone = x['endIsMilestone']
 					y.depends = x['depends']
@@ -284,7 +351,7 @@ def get_gantt_data(request, pid):
 							z.user = User.objects.get(id = int(i['resourceId']))
 							z.role = Role.objects.get(id = int(i['roleId']))
 							z.effort = i['effort']
-							z.save()
+							z.save()	
 							# x['assigs'].remove(i)
 					
 					for a in assigned_list:
@@ -308,6 +375,7 @@ def get_gantt_data(request, pid):
 		task_data['level']=x.level
 		task_data['status']=x.status
 		task_data['canWrite']=x.can_write
+		print('hi',x.start.timetuple())
 		task_data['start'] = int(time.mktime(x.start.timetuple())*1000)
 		task_data['end']= int(time.mktime(x.end.timetuple())*1000)
 		dt = x.end-x.start

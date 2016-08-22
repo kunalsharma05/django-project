@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'peragroUI',
     'reversion',
     'notifications',
@@ -43,7 +44,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'django_project',
     'smart_selects',
-    
+    'actstream',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -74,8 +75,8 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# The gantt charts take local time by default so to keep the app and gantts in sync use your local time zone
+TIME_ZONE = 'Asia/Kolkata' 
 
 USE_I18N = True
 

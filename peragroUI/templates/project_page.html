@@ -270,10 +270,144 @@
                       </div>
                           </div><!-- div for panel 3 -->
                               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="task-tab">
-                                <div class="x_content">
-                              <!-- <h1>View Taks:</h1> -->
+                                <div class="x_panel" style="border: 0px;">
+                                  <div class="x_title">
+                                    <h2>View/Change Roles</h2>                                                             
+                                    <div class="clearfix"></div>
                                 </div>
-                            </div><!-- for panel 4 -->   
+
+
+                              <div class="x_content">
+                                <table class="table table-hover">
+                                 <thead>
+                                    <tr>
+                                      <th>#</th>
+                                      <th>Role</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <form method="POST" action=".">
+                                    {% for x in roles %}
+                                    <tr>
+                                      <td>{{forloop.counter}}</td>
+                                      <td><input type="text" name="{{x.id}}" value="{{x.name}}" /></td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                    <td>Add a Role</td>
+                                    <td><input type="text" name="new_role"/></td> 
+                                    </tr>
+                                    
+
+                                  </tbody>
+                                      
+                                </table>
+                                  <input type="submit" name="save_role" value="save"/>
+                                    </form>
+
+                              <!-- <h1>View Taks:</h1> -->
+                              </div>
+                            </div>
+
+                            <div class="x_panel" style="border: 0px;">
+                                  <div class="x_title">
+                                    <h2>View/Change Relations</h2>                                                             
+                                    <div class="clearfix"></div>
+                                </div>
+
+
+                              <div class="x_content">
+                                <table class="table table-hover">
+                                 <thead>
+                                    <tr>
+                                      <th>#</th>
+                                      <th>Task</th>
+                                      <th>User</th>
+                                      <th>Role</th>
+                                      <th>Effort</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <form method="POST" action=".">
+                                    {% for x in relation_list %}
+                                    <tr>
+                                      <td>{{forloop.counter}}</td>
+                                        <td><select name="{{x.id}}" >
+                                          {% for y in task_list %}
+                                            {% if x.task.id == y.id %}
+                                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
+                                            {% else %}
+                                              <option value='{{y.id}}'>{{y.name}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                        </select></td>
+                                    
+
+                                      <td><select name="{{x.id}}_user">
+                                          {% for y in members_list %}
+                                            {% if x.user.id == y.id %}
+                                              <option value='{{y.id}}' selected="selected">{{y.username}}</option>
+                                            {% else %}
+                                              <option value='{{y.id}}'>{{y.username}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                        </select>
+                                      </td>
+                                    
+                                      <td><select name="{{x.id}}_role">
+                                          {% for y in roles %}
+                                            {% if x.role.id == y.id %}
+                                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
+                                            {% else %}
+                                              <option value='{{y.id}}'>{{y.name}}</option>
+                                            {% endif %}
+                                          {% endfor %}
+                                        </select>
+                                      </td>
+                                    <td><input type="number" name="{{x.id}}_effort" value="{{x.effort}}" data-validate-minmax="0,9999" /></td>
+
+                                    </tr>
+                                    
+                                    {% endfor %}
+
+
+
+                                      
+                                    <tr>
+                                    <td>Add a Relation</td>
+                                    <td><select name="new_task">
+                                          {% for y in task_list %}
+                                          <option value='{{y.id}}'>{{y.name}}</option>
+                                          {% endfor %}
+                                        </select></td>
+                                      <td><select name="new_user">
+                                          {% for y in members_list %}
+                                          <option value='{{y.id}}'>{{y.username}}</option>
+                                          {% endfor %}
+                                        </select>
+                                      </td>
+                                      <td><select name="new_role">
+                                          {% for y in roles %}
+                                          <option value='{{y.id}}'>{{y.name}}</option>
+                                          {% endfor %}
+                                        </select>
+                                      </td>
+                                      
+                                      <td><input type="number" name="new_effort" value="" data-validate-minmax="0,9999" /></td>
+                                    </tr> 
+                                    
+                                    
+
+                                  </tbody>
+                                      
+                                </table>
+                                  <input type="submit" class="btn btn-round btn-success" name="save_relation" value="Save"/>
+                                    </form>
+
+                              <!-- <h1>View Taks:</h1> -->
+                              </div>
+                            </div>
+                          </div><!-- for panel 4 -->   
                         </div>
                       </div>
                     </div>

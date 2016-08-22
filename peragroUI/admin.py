@@ -1,3 +1,14 @@
 from django.contrib import admin
+from django.utils.translation import ugettext as _
 
-# Register your models here.
+from reversion.admin import VersionAdmin
+
+from peragroUI.models import *
+
+
+admin.site.register(Profile)
+admin.site.register(MediaUpload)
+admin.site.register(TaskUI)
+admin.site.register(Role)
+admin.site.register(AssignedResource_Relation)
+    

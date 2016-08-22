@@ -306,6 +306,7 @@ document.getElementById('annotate').onclick = (function(){
       var video = video_div.getElementsByTagName('video')[0];
       video.setAttribute('crossOrigin', 'anonymous'); 
       var b = document.createElement('canvas');
+      b.id = 'canvas_id';
       b.width  = video.videoWidth;
       b.height = video.videoHeight;
       var ctx = b.getContext('2d');
@@ -475,26 +476,37 @@ document.getElementById('annotate').onclick = (function(){
 
 
 
- {% for x in comments %}
-                                  document.getElementById('{{x.id}}{{x.author}}').onclick = (function () {
+// var el = document.getElementsByClassName('xyz');
+// for (var i=0;i<el.length; i++) {
+//     el[i].click();
+// }
+
+});
+function tp(){
+  {% for x in comments %}
+    (function () {
 
     
-                                  		var cv_anno = $('#{{x.id}}');
-                                  		var anno = String(cv_anno.attr('anno'));
+                		var cv_anno = $('#{{x.id}}');
+                		var anno = String(cv_anno.attr('anno'));
+                    var videoObj = JSON.parse(anno);
+                    var width = videoObj['objects'][0]['width'];
+                    var height = videoObj['objects'][0]['height'];
 									    // var canvas = new fabric.Canvas('{{x.id}}');
 										// canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas));
 										            // var video_div  = document.getElementById('my-video');
                                  // var video = video_div.getElementsByTagName('video')[0];
 									    // var a = document.getElementById('d');
                       // console.log(a.width);
-										              var old_width = b.width;
-    	                                var old_height = b.height;
-        	                            var scale = 300.00/old_width;
+                    b = document.getElementById('canvas_id');
+			              var old_width = width;
+                    var old_height = height;
+                    var scale = 300.00/old_width;
                                     
                 	                   // canvas.setWidth(old_width);
             	                       // canvas.setHeight(old_height);
 
-									    // var scale = 0.5;
+									    // var scale = 0.5;  
 									    var canvas1 = new fabric.Canvas('{{x.id}}');
 									    canvas1.setDimensions({
 									        "width": old_width * scale,
@@ -506,19 +518,11 @@ document.getElementById('annotate').onclick = (function(){
 									    });
 									    canvas1.setZoom(scale);
 									    canvas1.renderAll();
-									  });
-   
+	  })();   
  {% endfor %}
-
-var el = document.getElementsByClassName('xyz');
-for (var i=0;i<el.length; i++) {
-    el[i].click();
 }
 
-});
-    
-
-
+window.onload = tp;
 
 
 

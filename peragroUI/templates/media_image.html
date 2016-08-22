@@ -282,38 +282,41 @@
 
                                   
 									
+                                  // document.getElementById('{{x.id}}{{x.author}}').onclick = (function () {
+                                    function tp(){
  {% for x in comments %}
-                                  document.getElementById('{{x.id}}{{x.author}}').onclick = (function () {
 
-    
-                                  		var cv_anno = $('#{{x.id}}');
-                                  		var anno = String(cv_anno.attr('anno'));
-									    // var canvas = new fabric.Canvas('{{x.id}}');
-										// canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas));
-										
-									    var a = document.getElementById('d');
-										var old_width = a.width;
-    	                                var old_height = a.height;
-        	                            var scale = 300.00/old_width;
+    (function(){
+                                      var cv_anno = $('#{{x.id}}');
+                                      var anno = String(cv_anno.attr('anno'));
+                      // var canvas = new fabric.Canvas('{{x.id}}');
+                    // canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas));
+                    
+                      var a = document.getElementById('d');
+                    var old_width = a.width;
+                                      var old_height = a.height;
+                                      var scale = 300.00/old_width;
                                     
-                	                   // canvas.setWidth(old_width);
-            	                       // canvas.setHeight(old_height);
+                                     // canvas.setWidth(old_width);
+                                     // canvas.setHeight(old_height);
 
-									    // var scale = 0.5;
-									    var canvas1 = new fabric.Canvas('{{x.id}}');
-									    canvas1.setDimensions({
-									        "width": old_width * scale,
-									        "height": old_height * scale
-									    })
-									    // var json = localStorage.getItem('save');
-									    canvas1.loadFromJSON(anno, function () {
-									        canvas1.renderAll();
-									    });
-									    canvas1.setZoom(scale);
-									    canvas1.renderAll();
-									  });
+                      // var scale = 0.5;
+                      var canvas1 = new fabric.Canvas('{{x.id}}');
+                      canvas1.setDimensions({
+                          "width": old_width * scale,
+                          "height": old_height * scale
+                      })
+                      // var json = localStorage.getItem('save');
+                      canvas1.loadFromJSON(anno, function () {
+                          canvas1.renderAll();
+                      });
+                      canvas1.setZoom(scale);
+                      canvas1.renderAll();
+                    })();
+                    
    
  {% endfor %}
+                                    }
 
                                 // });
 
@@ -321,12 +324,13 @@
   </script> 
 
 <script type="text/javascript">
-	window.onload = function(){
-	var el = document.getElementsByClassName('xyz');
-for (var i=0;i<el.length; i++) {
-    el[i].click();
-}
-};
+	window.onload = tp;
+  // function(){
+	// var el = document.getElementsByClassName('xyz');
+// for (var i=0;i<el.length; i++) {
+    // el[i].click();
+// }
+// };
 </script>
 
 

@@ -231,7 +231,7 @@ $.splittify = {
     console.log(computeStartDate(start).getTime());
   }
   function computeStartDate(start) {
-    var d = new Date(start+3600000*12);
+    var d = new Date(start);
     d.setHours(0, 0, 0, 0);
     //move to next working day
     while (isHoliday(d)) {
@@ -245,7 +245,7 @@ $.splittify = {
     return computeEndDate(end).getTime()
   }
   function computeEndDate(end) {
-    var d = new Date(end-3600000*12);
+    var d = new Date(end);
     d.setHours(23, 59, 59, 999);
     //move to next working day
     while (isHoliday(d)) {

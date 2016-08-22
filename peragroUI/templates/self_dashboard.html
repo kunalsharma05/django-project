@@ -315,26 +315,26 @@
                           <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
 
                             <!-- FOR THE NEWS FEED MODULE -->
-                            <!-- <ul class="messages">
+                            <ul class="messages">
+                              {% for x in news_feed %}
                               <li>
-                                <img src="images/img.jpg" class="avatar" alt="Avatar">
+                                <img src="{{x.actor.profile.profile_pic.url}}" class="avatar" alt="Avatar">
                                 <div class="message_date">
-                                  <h3 class="date text-info">24</h3>
-                                  <p class="month">May</p>
+                                  <!-- <h3 class="date text-info">{{x.timestamp.date.day}}</h3> -->
+                                  <p class="month">{{x.timestamp.date}}</p>
                                 </div>
                                 <div class="message_wrapper">
-                                  <h4 class="heading">Desmond Davison</h4>
-                                  <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
-                                  <br />
+                                  <h4 class="he ading">{{x.actor}}</h4>
+                                  <blockquote class="message"><a href="/media/{{x.target_object_id}}/">{{x}}</a></blockquote>
+                                  <br/>
                                   <p class="url">
                                     <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
-                                    <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
                                   </p>
                                 </div>
                               </li>
-                              
+                              {% endfor %}
 
-                            </ul> -->
+                            </ul>
                             <!-- end recent activity -->
 
                           </div>

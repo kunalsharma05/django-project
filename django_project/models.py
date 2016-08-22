@@ -74,17 +74,6 @@ class Component(models.Model):
     def __unicode__(self):
         return self.project.name+': '+self.name
 
-class Profile(models.Model):
-    """
-    """    
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    description = models.TextField()
-    profile_pic = models.ImageField(upload_to = 'profile_pictures/', default = 'profile_pictures/user.png')
-    organisation = models.CharField(max_length=256, blank=False)
-    position = models.CharField(blank=True, max_length=128)
-    def __unicode__(self):
-        return self.user.username
-
 class Membership(models.Model):
     """
     """
@@ -99,27 +88,27 @@ class Membership(models.Model):
         unique_together = ('project', 'member')
 
 
-# class Milestone(models.Model):
-#     """
-#     """
-#     project = models.ForeignKey(Project, verbose_name=_('project'))
-#     name = models.CharField(max_length=64)
-#     slug = AutoSlugField(max_length=64, populate_from='name', always_update=True, unique_with='project')
-#     description = models.TextField()
-#     author = models.ForeignKey(User, verbose_name=_('author'))
-#     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
-#     modified_at = models.DateTimeField(_('modified at'), auto_now=True)
-#     deadline = models.DateField(_('deadline'), default=datetime.date.today() + datetime.timedelta(days=10))
-#     date_completed = models.DateField(_('date completed'), null=True, blank=True)
+class Milestone(models.Model):
+    """
+    """
+    project = models.ForeignKey(Project, verbose_name=_('project'))
+    name = models.CharField(max_length=64)
+    slug = AutoSlugField(max_length=64, populate_from='name', always_update=True, unique_with='project')
+    description = models.TextField()
+    author = models.ForeignKey(User, verbose_name=_('author'))
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    modified_at = models.DateTimeField(_('modified at'), auto_now=True)
+    deadline = models.DateField(_('deadline'), default=datetime.date.today() + datetime.timedelta(days=10))
+    date_completed = models.DateField(_('date completed'), null=True, blank=True)
 
-#     class Meta:
-#         ordering = ('created_at',)
-#         verbose_name = _('milestone')
-#         verbose_name_plural = _('milestones')
-#         unique_together = ('project', 'name')
+    class Meta:
+        ordering = ('created_at',)
+        verbose_name = _('milestone')
+        verbose_name_plural = _('milestones')
+        unique_together = ('project', 'name')
 
-#     def __unicode__(self):
-#         return self.project.name+': '+self.name
+    def __unicode__(self):
+        return self.project.name+': '+self.name
 
 
 class DictModel(models.Model):
@@ -245,31 +234,22 @@ class TaskType(OrderedDictModel):
 class Task(TaskMixin, models.Model):
     """
     """
-    name = models.CharField(max_length=256, null=True, blank=True)
-    short_name = models.CharField(max_length=126, null=True, blank=True)
     project = models.ForeignKey(Project, verbose_name=_('project'))
 
     author = models.ForeignKey(User, verbose_name=_('author'), related_name='created_tasks', blank=True)
-    
+
     owner = models.ForeignKey(User, verbose_name=_('owner'), related_name='owned_tasks', null=True, blank=True)
-    level = models.IntegerField(null=True)
+
     summary = models.CharField(_('summary'), max_length=64)
     description = models.TextField(_('description'))
-    status = models.CharField(max_length=256, default='STATUS_ACTIVE')
-    # status = ChainedForeignKey(Status, chained_field="project", chained_model_field="project", verbose_name=_('status'))
+
+    status = ChainedForeignKey(Status, chained_field="project", chained_model_field="project", verbose_name=_('status'))
     priority = ChainedForeignKey(Priority, chained_field="project", chained_model_field="project", verbose_name=_('priority'))
     type = ChainedForeignKey(TaskType, chained_field="project", chained_model_field="project", verbose_name=_('task type'))
 
-    start = models.DateField(_('start'), null=True, blank=True, help_text='YYYY-MM-DD')
-    end = models.DateField(_('end'), null=True, blank=True, help_text='YYYY-MM-DD')
+    deadline = models.DateField(_('deadline'), null=True, blank=True, help_text='YYYY-MM-DD')
 
-    start_is_milestone = models.BooleanField(default=False)
-    end_is_milestone = models.BooleanField(default=False)
-    can_write = models.BooleanField(default=True)
-    has_child = models.BooleanField(default=False)
-    depends = models.CharField(max_length=256,blank=True,null=True)
-    collapsed = models.BooleanField(default=False)
-    # milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
+    milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
     component = ChainedForeignKey(Component, chained_field="project", chained_model_field="project", verbose_name=_('component'))
 
     created_at = models.DateTimeField(_('created at'), auto_now_add=True, editable=False)
@@ -277,21 +257,6 @@ class Task(TaskMixin, models.Model):
     def __unicode__(self):
         return u'%s' % (self.summary)
 
-
-class Role(models.Model):
-    project = models.ForeignKey(Project, verbose_name=_('project'))
-    name = models.CharField(max_length=256, null=True)
-
-    def __unicode__(self):
-        return self.project.name+':'+self.name
-
-class AssignedResource_Relation(models.Model):
-    task = models.ForeignKey(Task)
-    user = models.ForeignKey(User)
-    role = models.ForeignKey(Role)
-    effort = models.BigIntegerField(null=True)
-    def __unicode__(self):
-            return self.task.project.name+':'+self.task.name+' '+self.user.username
 
 
 
@@ -350,52 +315,15 @@ class ObjectTask(models.Model):
     def __str__(self):
         return "%s for %s" % (str(self.task), str(self.content_object))
 
-
-
-
-
-def upload_manager(instance, filename):
-	user = instance.project.author
-	user_profile = Profile.objects.get(user=user)
-	user_organisation = user_profile.organisation
-	user_project = instance.project.name
-	# b = str(MEDIA_ROOT)
-	a = user_organisation+'/'+user_project+'/'+filename+'/'
-	return a
-	# return MEDIA_ROOT
-
-class MediaUpload(models.Model):
-	project = models.ForeignKey(Project, related_name='files_project', on_delete=models.CASCADE)
-	# owner = models.ForeignKey(User, on_delete=models.CASCADE)
-	media = models.FileField(upload_to=upload_manager)
-	mimetype = models.CharField(max_length=255, null=True, blank=True)
-	file_description = models.TextField()
-	hash = models.CharField(max_length=128, db_index=True)
-	def __unicode__(self):
-		return 'File: %s %s'%(self.media.name, self.mimetype)
-
-# class AssetsMedia(models.Model):
-	
-# 	file = models.ForeignKey(MediaUpload, related_name='assets', on_delete=models.CASCADE)
-# 	subname = models.CharField(max_length=255)
-# 	mimetype = models.CharField(max_length=255, null=True, blank=True)
-# 	asset_description = models.TextField()
-# 	def __unicode__(self):
-# 		return 'AssetReference: %s %s'%(self.subname, self.mimetype)
-
-# class DependenciesRelation(models.Model):
-# 	file = models.ForeignKey(MediaUpload, on_delete=models.CASCADE)
-# 	asset = models.ForeignKey(AssetsMedia, related_name='asset')
-# 	dependency = models.ForeignKey(AssetsMedia, related_name='dependency')
-# 	def __unicode__(self):
-# 		return 'Dependency of %s : %s'%(self.asset.subname, self.dependency.subname)
-
-# class Annotation(models.Model):
-# 	comment = models.OneToOneField(Comment, on_delete=models.CASCADE)
-	
-# 	# aspect_ratio = models.DecimalField(max_digits=5, decimal_places=3)
-# 	def __unicode__(self):
-# 		return str(self.comment)
+# def upload_manager(instance, filename):
+#     user = instance.project.author
+#     user_profile = Profile.objects.get(user=user)
+#     user_organisation = user_profile.organisation
+#     user_project = instance.project.name
+#     # b = str(MEDIA_ROOT)
+#     a = user_organisation+'/'+user_project+'/'+filename+'/'
+#     return a
+#     # return MEDIA_ROOT
 
 from follow import utils
 from reversion import revisions as reversion
@@ -409,4 +337,5 @@ utils.register(Project)
 utils.register(Task)
 
 # # IMPORTANT LINE, really leave it there!
-# from django_project import handlers
+from django_project import handlers
+ 

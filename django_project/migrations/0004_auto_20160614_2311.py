@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             name='MediaUpload',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('media', models.FileField(upload_to=django_project.models.upload_manager)),
+                ('media', models.FileField()),
                 ('mimetype', models.CharField(blank=True, max_length=255, null=True)),
                 ('file_description', models.TextField()),
                 ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='files', to='django_project.Project')),

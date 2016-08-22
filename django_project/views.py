@@ -248,22 +248,22 @@ class ProjectViewSet(NestedViewSetMixin, FilteredModelViewSetMixin, FollowingMod
         return Response(ret)
 
 
-# class MilestoneModelViewSet(NestedViewSetMixin, FilteredModelViewSetMixin, FollowingModelViewSet):
-#     queryset = models.Milestone.objects.all()
-#     serializer_class = serializers.MilestoneSerializer
-#     filter_class = dp_filters.MilestoneFilter
+class MilestoneModelViewSet(NestedViewSetMixin, FilteredModelViewSetMixin, FollowingModelViewSet):
+    queryset = models.Milestone.objects.all()
+    serializer_class = serializers.MilestoneSerializer
+    filter_class = dp_filters.MilestoneFilter
 
-#     @link(is_for_list=True)
-#     def statistics(self, request, **kwargs):
-#         from datetime import datetime
-#         qs = self.get_queryset()
-#         ret = {}
-#         ret['Total'] = qs.count()
-#         ret['Todo'] = qs.exclude(deadline__lt=datetime.now()).exclude(task__owner=None).exclude(date_completed__lt=datetime.now()).count()
-#         ret['Past Due'] = qs.filter(deadline__lt=datetime.now()).count()
-#         ret['Unassigned'] = qs.filter(task__owner=None).count()
-#         ret['Complete'] = qs.filter(date_completed__lt=datetime.now()).count()
-#         return Response(ret)
+    @link(is_for_list=True)
+    def statistics(self, request, **kwargs):
+        from datetime import datetime
+        qs = self.get_queryset()
+        ret = {}
+        ret['Total'] = qs.count()
+        ret['Todo'] = qs.exclude(deadline__lt=datetime.now()).exclude(task__owner=None).exclude(date_completed__lt=datetime.now()).count()
+        ret['Past Due'] = qs.filter(deadline__lt=datetime.now()).count()
+        ret['Unassigned'] = qs.filter(task__owner=None).count()
+        ret['Complete'] = qs.filter(date_completed__lt=datetime.now()).count()
+        return Response(ret)
 
 
 class ComponentViewSet(NestedViewSetMixin, viewsets.ModelViewSet):
@@ -336,7 +336,7 @@ class TaskViewSet(NestedViewSetMixin, FilteredModelViewSetMixin, FollowingModelV
 
             if project_pk:
                 data = {}
-                for model, field in [('Priority', 'priority'), ('TaskType', 'type'), ('Component', 'component')]:                 #Milestone removed , ('Milestone', 'milestone')
+                for model, field in [('Priority', 'priority'), ('TaskType', 'type'), ('Component', 'component'), ('Milestone', 'milestone')]:
                     qs = getattr(models, model).objects.filter(project_id=int(project_pk))
                     data[field] = getattr(serializers, model+'Serializer')(qs, many=True, context={'request': request}).data
                 for model, field in [('User', 'owner')]:
