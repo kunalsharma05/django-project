@@ -61,7 +61,7 @@ class Role(models.Model):
     name = models.CharField(max_length=256, null=True)
 
     def __unicode__(self):
-        return self.project.name+':'+self.name
+        return self.name
 
 class AssignedResource_Relation(models.Model):
     task = models.ForeignKey(TaskUI)
@@ -136,7 +136,7 @@ class UiComment(models.Model):
         verbose_name_plural = _('comments')
 
     def __str__(self):
-        return "%s+" % (self.comment[:50])
+        return "%s" % (self.comment[:50])
 
 # class AssetsMedia(models.Model):
 	

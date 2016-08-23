@@ -107,7 +107,7 @@ $(function() {
   $(".ganttButtonBar div").append("<button onclick='clearGantt();' class='button'>clear</button>")
           .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
           .append("<button onclick='getFile();' class='button'>export</button>");
-  $(".ganttButtonBar h1").html("<a href='http://twproject.com' title='Twproject the friendly project and work management tool' target='_blank'><img width='80%' src='res/twBanner.jpg'></a>");
+  $(".ganttButtonBar h1").html("<a href='http://peragro.org/' target='_blank'><img width='80%' src='{%static '/peragroUI/images/peragro.png' %}></a>");
   $(".ganttButtonBar div").addClass('buttons');
   //overwrite with localized ones
   loadI18n();
@@ -308,51 +308,6 @@ function getFile() {
 }
 
 
-//-------------------------------------------  LOCAL STORAGE MANAGEMENT (for this demo only) ------------------------------------------------------
-// Storage.prototype.setObject = function(key, value) {
-//   this.setItem(key, JSON.stringify(value));
-// };
-
-
-// Storage.prototype.getObject = function(key) {
-//   return this.getItem(key) && JSON.parse(this.getItem(key));
-// };
-
-
-// function loadFromLocalStorage() {
-//   var ret;
-//   if (localStorage) {
-//     if (localStorage.getObject("teamworkGantDemo")) {
-//       ret = localStorage.getObject("teamworkGantDemo");
-//     }
-//   } else {
-//     $("#taZone").show();
-//     console.log("poop");
-//   }
-//   if (!ret || !ret.tasks || ret.tasks.length == 0){
-//     abc = $("#ta").val();
-//     ret = JSON.parse($("#ta").val());
-
-
-//     //actualiza data
-//     var offset=new Date().getTime()-ret.tasks[0].start;
-//     for (var i=0;i<ret.tasks.length;i++)
-//       ret.tasks[i].start=ret.tasks[i].start+offset;
-
-
-//   }
-//   ge.loadProject(ret);
-//   ge.checkpoint(); //empty the undo stack
-// }
-
-
-// function saveInLocalStorage() {
-//   var prj = ge.saveProject();
-//   if (localStorage) {
-//     localStorage.setObject("teamworkGantDemo", prj);
-//   } else {
-//     $("#ta").val(JSON.stringify(prj));
-//   }
 // }
 
 

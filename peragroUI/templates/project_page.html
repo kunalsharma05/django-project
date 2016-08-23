@@ -55,7 +55,7 @@
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="../dashboard/{{user.username}}">Dashboard</a></li>
+                      <li><a href="/dashboard/{{user.username}}">Dashboard</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-edit"></i> Projects <span class="fa fa-chevron-down"></span></a>
@@ -374,7 +374,7 @@
 
                                       
                                     <tr>
-                                    <td>Add a Relation</td>
+                                    <td><input type="checkbox" name="add_new_relation" id="add_new_relation" /></td>
                                     <td><select name="new_task">
                                           {% for y in task_list %}
                                           <option value='{{y.id}}'>{{y.name}}</option>
@@ -393,7 +393,7 @@
                                         </select>
                                       </td>
                                       
-                                      <td><input type="number" name="new_effort" value="" data-validate-minmax="0,9999" /></td>
+                                      <td><input type="number" id="new_effort" name="new_effort" value="" data-validate-minmax="0,9999" /></td>
                                     </tr> 
                                     
                                     
@@ -454,6 +454,10 @@
     
     <script src="{% static 'peragroUI/css/vendors/dropzone/dist/min/dropzone.min.js' %}"></script>
 <script type="text/javascript">
+if(document.getElementById("add_new_relation").toggle){
+  document.getElementById("new_effort").required;
+}
+
     Dropzone.autoDiscover = false;
     $('.dropzone').dropzone ({
         url: ".",

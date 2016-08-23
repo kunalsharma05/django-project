@@ -325,7 +325,13 @@
                                 </div>
                                 <div class="message_wrapper">
                                   <h4 class="he ading">{{x.actor}}</h4>
+                                  {% if x.verb == 'assigned' %}
+                                  <blockquote class="message"><a href="/gantt/{{x.target.project.id}}/">{{x.actor}} was assigned role {{x.action_object}} on {{x.target}}</a></blockquote>
+                                  {% elif x.verb == 'commented' %}
                                   <blockquote class="message"><a href="/media/{{x.target_object_id}}/">{{x}}</a></blockquote>
+                                  {% elif x.verb == 'uploaded' %}
+                                  <blockquote class="message"><a href="/project/{{x.target.author}}/{{x.target.name}}/">{{x}}</a></blockquote>
+                                  {% endif %}
                                   <br/>
                                   <p class="url">
                                     <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>

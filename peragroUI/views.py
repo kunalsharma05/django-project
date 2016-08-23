@@ -198,12 +198,12 @@ def project_page(request, author_name, project_slug):
 					role.name = request.POST[key]
 					role.save()
 		
-		elif request.POST.get('save_relaltion'):
+		elif request.POST.get('save_relation'):
+			flag = 0
 			for key in request.POST.iterkeys():
-				flag = 0
 				if key in ['new_task','new_role','new_effort','new_user']:
 					if flag == 0:
-						if request.POST[key] != "":	
+						if request.POST.get('add_new_relation'):	
 							flag = 1
 							rel = AssignedResource_Relation()
 							rel.project = project_ob
@@ -211,11 +211,10 @@ def project_page(request, author_name, project_slug):
 							rel.user = User.objects.get(id = int(request.POST['new_user']))
 							rel.role = Role.objects.get(id = int(request.POST['new_role']))
 							rel.effort = request.POST['new_effort'] 
+							action.send(rel.user, verb='assigned', action_object=rel.role, target=rel.task)
 							rel.save()
 						else:
 							pass
-					else:
-						pass
 				elif key == 'save_relaltion':
 					pass
 				else:
@@ -226,8 +225,9 @@ def project_page(request, author_name, project_slug):
 							rel.user = User.objects.get(id = int(request.POST[key+'_user']))
 							rel.effort = int(request.POST[key+'_effort'])
 							rel.save()
+
 			# if request.POST.get('save_reelaltion'):
-			return render(request, 'project_page.html', context)
+			return HttpResponseRedirect('.')
 								# for x in roles:
 			# 	try:
 			# 		role = Role.objects.get(id = int(request.POST[x.id]))
@@ -249,6 +249,7 @@ def project_page(request, author_name, project_slug):
 				media_ob.file_description = file_descr
 				media_ob.hash = file_descr.hash
 				media_ob.save()
+				action.send(request.user, verb='uploaded', action_object=media_ob, target=project_ob)
 
 		return HttpResponse('done')
 	else:
@@ -272,7 +273,7 @@ def media_view(request, mid):
 		except:
 			comment.annotation = None
 		comment.save()
-		action.send(request.user, verb='comment on', action_object=comment, target=media_ob)
+		action.send(request.user, verb='commented', action_object=comment, target=media_ob)
 		return HttpResponseRedirect('.')
 
 	path = os.path.join(MEDIA_ROOT, media_ob.media.name)
@@ -291,7 +292,10 @@ def media_view(request, mid):
 		'comments':comments,
 		'user':request.user,
 	} 
-	return render(request, 'media_image.html', context)
+	if 'video' in media_ob.mimetype:
+		return render(request, 'media_video.html', context)
+	elif 'image' in media_ob.mimetype:
+		return render(request, 'media_image.html', context)
 
 @csrf_exempt
 @login_required	

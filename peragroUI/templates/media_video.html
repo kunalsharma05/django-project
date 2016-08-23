@@ -74,12 +74,12 @@
            <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
  -->
         <h2 id='media-name'>{{media_ob.media.name}}</h2>
-        <p>
+        <!-- <p>
         Assets: {{file_descr.assets}}
         {% for x in file_descr.assets %}
         Dependencies: {{x.dependencies}}
         {% endfor %}
-        </p>
+        </p> -->
 
 
 
@@ -90,7 +90,6 @@
 
 
 
-        <div class="jumbotron" id="image-view" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
 
     <video id="my-video" class="video-js" controls preload="auto" width="640" height="264"
     poster="MY_VIDEO_POSTER.jpg" data-setup="{}">
@@ -100,12 +99,32 @@
         <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
       </p>
     </video>
+        </br>
         <!-- <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3> -->
         <!-- 
         <button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
         <button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
         <button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br> -->
+            <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+                      <div class="panel">
+                        <a class="panel-heading collapsed" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                          <h4 class="panel-title">View Media Data</h4>
+                        </a>
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="false">
+                          <div class="x_panel" style="text-align: left;">         
+                            <div class="x_title" id="data_title" >
 
+                            <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content" id="data_body">
+                        
+              
+                          </div>
+                          </div>
+                        </div>
+                      </div>
+                
+        </div>
                   </div>
                 </div>
               </div>
@@ -482,7 +501,7 @@ document.getElementById('annotate').onclick = (function(){
 // }
 
 });
-function tp(){
+function load_comments(){
   {% for x in comments %}
     (function () {
 
@@ -520,9 +539,47 @@ function tp(){
 									    canvas1.renderAll();
 	  })();   
  {% endfor %}
+(function(){
+          $.ajax({
+              dataType: 'json',
+              method: 'GET',
+              url: '../../media_description/{{media_ob.id}}',
+         
+              success : function(data) {
+                console.log(data);
+                var div1 = document.getElementById('data_title');
+                var div2 = document.getElementById('data_body');
+
+                var p1 = document.createElement("p");
+                p1.innerHTML = '<strong>Hash:</strong> ' + data.hash + '</br><strong>Assets: </strong>'+data.assets.length+'</hr></br>';
+                div1.appendChild(p1);
+                for(var i = 0; i < data.assets.length; i++) {
+                  var p2 = document.createElement("p");
+                  p2.innerHTML = '<h5>*'+data.assets[i].subname+' '+data.assets[i].mimetype+'</h5></br>';
+                  if(data.assets[i].dependencies.length != 0){
+                    p2.appendChild(document.createElement("h5")).innerHTML='&nbspDependencies('+data.assets[i].dependencies.length+'):</br>';
+                    }
+                    for(var j = 0; j < data.assets[i].dependencies.length; j++) {
+                      var p3 = document.createElement("p");
+                      p3.innerHTML = '&nbsp&nbsp&nbsp&nbsp*'+data.assets[i].dependencies[j].subname+' '+data.assets[i].dependencies[j].mimetype+'</br>'
+                      p2.appendChild(p3);
+                    }
+                  if(data.assets[i].metadata.length != 0){
+                    p2.appendChild(document.createElement("h5")).innerHTML='&nbspMetadata('+data.assets[i].metadata.length+'): </br>';
+                  }
+                    for(var k = 0; k < data.assets[i].metadata.length; k++) {
+                      var p4 = document.createElement("p");
+                      p4.innerHTML = '&nbsp&nbsp&nbsp&nbsp*'+data.assets[i].metadata[k].key+': '+data.assets[i].metadata[k].val+' ('+data.assets[i].metadata[k].type+') </br>'
+                      p2.appendChild(p4);
+                    }
+                    div2.appendChild(p2);
+                  }
+                }
+              });
+           })();
 }
 
-window.onload = tp;
+window.onload = load_comments;
 
 
 
