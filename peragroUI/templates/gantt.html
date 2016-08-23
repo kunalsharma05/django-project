@@ -308,6 +308,51 @@ function getFile() {
 }
 
 
+// Storage.prototype.setObject = function(key, value) {
+//-------------------------------------------  LOCAL STORAGE MANAGEMENT (for this demo only) ------------------------------------------------------
+//   this.setItem(key, JSON.stringify(value));
+// };
+
+
+// Storage.prototype.getObject = function(key) {
+//   return this.getItem(key) && JSON.parse(this.getItem(key));
+// };
+
+
+// function loadFromLocalStorage() {
+//   var ret;
+//   if (localStorage) {
+//     if (localStorage.getObject("teamworkGantDemo")) {
+//       ret = localStorage.getObject("teamworkGantDemo");
+//     }
+//   } else {
+//     $("#taZone").show();
+//     console.log("poop");
+//   }
+//   if (!ret || !ret.tasks || ret.tasks.length == 0){
+//     abc = $("#ta").val();
+//     ret = JSON.parse($("#ta").val());
+
+
+//     //actualiza data
+//     var offset=new Date().getTime()-ret.tasks[0].start;
+//     for (var i=0;i<ret.tasks.length;i++)
+//       ret.tasks[i].start=ret.tasks[i].start+offset;
+
+
+//   }
+//   ge.loadProject(ret);
+//   ge.checkpoint(); //empty the undo stack
+// }
+
+
+// function saveInLocalStorage() {
+//   var prj = ge.saveProject();
+//   if (localStorage) {
+//     localStorage.setObject("teamworkGantDemo", prj);
+//   } else {
+//     $("#ta").val(JSON.stringify(prj));
+//   }
 // }
 
 
@@ -426,7 +471,7 @@ function editResources(){
       <th class="gdfColHeader gdfResizable" style="width:50px;">dur.</th>
       <th class="gdfColHeader gdfResizable" style="width:50px;">dep.</th>
       <th class="gdfColHeader gdfResizable" style="width:200px;">assignees</th>
-      <th class="gdfColHeader gdfResizable" style="width:200px;">sez</th>
+      <th class="gdfColHeader gdfResizable" style="width:200px;">task type</th>
 
     </tr>
     </thead>
