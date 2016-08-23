@@ -57,6 +57,10 @@
         <div class="col-md-9">
          <div class="clearfix"></div>
          <div class="x_panel">         
+                 <div class="x_title">
+        <h2 id='media-name'>{{media_ob.media.name}}</h2>
+                <div class="clearfix"></div>
+                 </div>
                   <div class="x_content" style="text-align: center;">
                   <button id="annotate" data-toggle="modal" data-target="#annotation_modal" href="" class="btn btn-success" ><i class="fa fa-edit m-right-xs"></i>Annotate</button>
                       
@@ -67,23 +71,52 @@
           <label for="drawing-line-width">Line width:</label>
            <p id="width">5</p> <input type="range" value="5" min="0" max="150" id="width-select"><br>
  -->
-        <h2 id='media-name'>{{media_ob.media.name}}</h2>
-        <p>
-        Assets: {{file_descr.assets}}
-        {% for x in file_descr.assets %}
+        
+<!--         {% for x in file_descr.assets %}
         Dependencies: {{x.dependencies}}
         {% endfor %}
-        </p>
-            
-        <div class="jumbotron" id="image-view" style="width: 100%; height: 100%; position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
+ -->        
+            <button id = 'test'>test</button>
+        <div class="jumbotron" id="image-view" style=" position: relative; -moz-user-select: none; background: none; text-align: center; align-self: center; margin:0px auto;"> <!-- <canvas class="lower-canvas" id="c"  style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas> --></div>
 
         <!-- <h3>This element shows the JSON output, to see deserialization, clear the canvas and press deserialize</h3> -->
         <!-- 
         <button id="clear-json" class="btn btn-info">Clear JSON output</button><br>
         <button id="deserialize-json" class="btn btn-info">Deserialize JSON output</button><br>
         <button id="insert-text" class="btn btn-info">Insert Text: OFF</button><br> -->
+        <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+                      <div class="panel">
+                        <a class="panel-heading collapsed" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                          <h4 class="panel-title">View Media Data</h4>
+                        </a>
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="false">
+                          <div class="x_panel" style="text-align: left;">         
+                            <div class="x_title" id="data_title" >
 
-                  </div>
+                            <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content" id="data_body">
+                        
+              
+                          </div>
+                          </div>
+                        </div>
+                      </div>
+                <!--       <div class="panel">
+                        <a class="panel-heading collapsed" role="tab" id="headingTwo" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                          <h4 class="panel-title">Collapsible Group Items #2</h4>
+                        </a>
+                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo" aria-expanded="false" style="height: 0px;">
+                          <div class="panel-body">
+                            <p><strong>Collapsible Item 2 data</strong>
+                            </p>
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,
+                          </div>
+                        </div>
+                      </div> -->
+        </div>
+            
+                   </div>
                 </div>
               </div>
             
@@ -106,8 +139,8 @@
                                   <h4 class="heading">{{x.author.username}}</h4>
                                   <blockquote class="message" style="font-size: 12px;"><p>{{x.comment}}</p></blockquote>
                                   <br />
-                                  <button id = "{{x.id}}{{x.author}}" style="display:none;" class="xyz"></button>
-                                  {% if x.annotation %}
+<!--                                   <button id = "{{x.id}}{{x.author}}" style="display:none;" class="xyz"></button>
+ -->                                  {% if x.annotation %}
                                   <p class="url">
                                     <canvas class="lower-canvas" id="{{x.id}}" anno="{{x.annotation}}" style="border: 1px solid rgb(170, 170, 170); position: relative; left: 0px; top: 0px; -moz-user-select: none;"></canvas>
                                      <!-- <canvas id="c1{{x.id}}" style="border:1px solid black;" ></canvas> -->
@@ -273,67 +306,95 @@
 
 
     
-    <script>
-    		      
-             
-                              
-                              // $("#a").onclick = (function () {
-   // code here
+<script>
 
-                                  
-									
-                                  // document.getElementById('{{x.id}}{{x.author}}').onclick = (function () {
-                                    function tp(){
- {% for x in comments %}
-
-    (function(){
-                                      var cv_anno = $('#{{x.id}}');
-                                      var anno = String(cv_anno.attr('anno'));
+  function load_comments(){
+     {% for x in comments %}
+        (function(){
+          var cv_anno = $('#{{x.id}}');
+          var anno = String(cv_anno.attr('anno'));
                       // var canvas = new fabric.Canvas('{{x.id}}');
                     // canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas));
-                    
-                      var a = document.getElementById('d');
-                    var old_width = a.width;
-                                      var old_height = a.height;
-                                      var scale = 300.00/old_width;
+           var videoObj = JSON.parse(anno);
+            var width = videoObj['objects'][0]['width'];
+            var height = videoObj['objects'][0]['height'];         
+  
+            var a = document.getElementById('d');
+            // var old_width = width;
+            console.log(width)
+            // var old_height = height;
+            if(width>300){
+              var scale = 300.00/width;
+              final_width = width * scale;
+              final_height = height * scale; 
+            }
+            else{
+              final_width = width;
+              final_height = height;
+
+            }
                                     
                                      // canvas.setWidth(old_width);
                                      // canvas.setHeight(old_height);
 
                       // var scale = 0.5;
-                      var canvas1 = new fabric.Canvas('{{x.id}}');
-                      canvas1.setDimensions({
-                          "width": old_width * scale,
-                          "height": old_height * scale
-                      })
+            var canvas1 = new fabric.Canvas('{{x.id}}');
+            canvas1.setDimensions({
+                "width": final_width,
+                "height": final_height,
+            })
                       // var json = localStorage.getItem('save');
-                      canvas1.loadFromJSON(anno, function () {
-                          canvas1.renderAll();
-                      });
-                      canvas1.setZoom(scale);
-                      canvas1.renderAll();
-                    })();
+            canvas1.loadFromJSON(anno, function () {
+                canvas1.renderAll();
+            });
+          canvas1.setZoom(scale);
+          canvas1.renderAll();
+        })();
                     
-   
- {% endfor %}
-                                    }
+     {% endfor %}
+          (function(){
+          $.ajax({
+              dataType: 'json',
+              method: 'GET',
+              url: '../../media_description/{{media_ob.id}}',
+         
+              success : function(data) {
+                console.log(data);
+                var div1 = document.getElementById('data_title');
+                var div2 = document.getElementById('data_body');
 
-                                // });
-
+                var p1 = document.createElement("p");
+                p1.innerHTML = '<strong>Hash:</strong> ' + data.hash + '</br><strong>Assets: </strong>'+data.assets.length+'</hr></br>';
+                div1.appendChild(p1);
+                for(var i = 0; i < data.assets.length; i++) {
+                  var p2 = document.createElement("p");
+                  p2.innerHTML = '<h5>*'+data.assets[i].subname+' '+data.assets[i].mimetype+'</h5></br>';
+                  if(data.assets[i].dependencies.length != 0){
+                    p2.appendChild(document.createElement("h5")).innerHTML='&nbspDependencies('+data.assets[i].dependencies.length+'):</br>';
+                    }
+                    for(var j = 0; j < data.assets[i].dependencies.length; j++) {
+                      var p3 = document.createElement("p");
+                      p3.innerHTML = '&nbsp&nbsp&nbsp&nbsp*'+data.assets[i].dependencies[j].subname+' '+data.assets[i].dependencies[j].mimetype+'</br>'
+                      p2.appendChild(p3);
+                    }
+                  if(data.assets[i].metadata.length != 0){
+                    p2.appendChild(document.createElement("h5")).innerHTML='&nbspMetadata('+data.assets[i].metadata.length+'): </br>';
+                  }
+                    for(var k = 0; k < data.assets[i].metadata.length; k++) {
+                      var p4 = document.createElement("p");
+                      p4.innerHTML = '&nbsp&nbsp&nbsp&nbsp*'+data.assets[i].metadata[k].key+': '+data.assets[i].metadata[k].val+' ('+data.assets[i].metadata[k].type+') </br>'
+                      p2.appendChild(p4);
+                    }
+                    div2.appendChild(p2);
+                  }
+                }
+              });
+           })(); //This function is being called to return the metadata of the media object. A simple Ajax call to the server returns json data 
+             
+                                }
                     
+  window.onload = load_comments;
   </script> 
-
-<script type="text/javascript">
-	window.onload = tp;
-  // function(){
-	// var el = document.getElementsByClassName('xyz');
-// for (var i=0;i<el.length; i++) {
-    // el[i].click();
-// }
-// };
-</script>
-
-
                                 
   </body>
 </html>

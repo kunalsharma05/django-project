@@ -18,6 +18,7 @@ urlpatterns = [
     # url(r'^profile/edit/$', views.edit_profile),
     # url(r'^profile/help/$', views.profile_help),
 	url(r'^media/(?P<mid>[0-9]+)/$', views.media_view, name='media review'),
+    url(r'^media_description/(?P<mid>[0-9]+)/$', views.media_description, name='media description'),
 
 
     # url(r'^questions/$', views.questions),

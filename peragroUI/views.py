@@ -291,7 +291,43 @@ def media_view(request, mid):
 		'comments':comments,
 		'user':request.user,
 	} 
-	return render(request, 'media_video.html', context)
+	return render(request, 'media_image.html', context)
+
+@csrf_exempt
+@login_required	
+def media_description(request, mid):
+	media_ob = MediaUpload.objects.get(id= mid)
+	path = os.path.join(MEDIA_ROOT, media_ob.media.name)
+	analyzer = Analyzer()
+	file_descr = analyzer.analyze_file(path)
+	data = {}
+	data['hash']=media_ob.hash
+	data['assets'] = []
+	if file_descr.assets:
+		for x in file_descr.assets:
+			asset_data = {}
+			asset_data['subname'] = x.asset.subname
+			asset_data['mimetype'] = x.asset.mimetype
+			asset_data['dependencies'] = []
+			if x.dependencies:
+				for y in x.dependencies:
+					dep_data = {}
+					dep_data['subname'] = y.subname
+					dep_data['mimetype'] = y.mimetype
+					asset_data['dependencies'].append(dep_data)
+			asset_data['metadata'] = []
+			if x.metadata:
+				for key, value in x.metadata.items():
+					metadata_data = {}
+					type, val = get_metadatavalue_type(value)
+					print(val)
+					metadata_data['key'] = key
+					metadata_data['type'] = type
+					metadata_data['val'] = val
+					asset_data['metadata'].append(metadata_data)
+			data['assets'].append(asset_data)
+
+	return JsonResponse(data)
 
 	# clist = []
 	# for x in comments:
