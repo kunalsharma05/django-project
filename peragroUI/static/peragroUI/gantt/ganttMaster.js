@@ -758,11 +758,11 @@ GanttMaster.prototype.addBelowCurrentTask=function(){
   self.beginTransaction();
   var ch;
   var row = 0;
-  if (self.currentTask) {
-    ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1);
+  if (self.currentTask) {//removed tmp
+    ch = factory.build(new Date().getTime(), "", "", self.currentTask.level + 1, self.currentTask.start, 1);
     row = self.currentTask.getRow() + 1;
   } else {
-    ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1);
+    ch = factory.build(new Date().getTime(), "", "", 0, new Date().getTime(), 1);
   }
   var task = self.addTask(ch, row);
   if (task) {
@@ -784,11 +784,11 @@ GanttMaster.prototype.addAboveCurrentTask=function(){
     //cannot add brothers to root
     if (self.currentTask.level <= 0)
       return;
-
-    ch = factory.build("tmp_" + new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1);
+    //removed tmp
+    ch = factory.build(new Date().getTime(), "", "", self.currentTask.level, self.currentTask.start, 1);
     row = self.currentTask.getRow();
   } else {
-    ch = factory.build("tmp_" + new Date().getTime(), "", "", 0, new Date().getTime(), 1);
+    ch = factory.build(new Date().getTime(), "", "", 0, new Date().getTime(), 1);
   }
   self.beginTransaction();
   var task = self.addTask(ch, row);

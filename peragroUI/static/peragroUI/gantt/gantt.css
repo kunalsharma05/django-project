@@ -149,7 +149,7 @@ body{
 
 .ganttButtonBar .buttons, .ganttButtonBar h1 {
   display:inline-block;
-  margin:0px 0 0 10px;
+  margin:0px 0 0 0px;
 }
 
 .button span.teamworkIcon {

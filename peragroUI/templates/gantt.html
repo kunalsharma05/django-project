@@ -103,11 +103,11 @@ $(function() {
   workSpace.css({width:$(window).width() - 20,height:$(window).height() - 100});
   ge.init(workSpace);
 
-  //inject some buttons (for this demo only)
+  //inject some buttons 
   $(".ganttButtonBar div").append("<button onclick='clearGantt();' class='button'>clear</button>")
           .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-          .append("<button onclick='getFile();' class='button'>export</button>");
-  $(".ganttButtonBar h1").html("<a href='http://peragro.org/' target='_blank'><img width='80%' src='{%static '/peragroUI/images/peragro.png' %}></a>");
+          
+  $(".ganttButtonBar h1").html("<a href='http://peragro.org/' target='_blank'><img width='100%' src='/static/peragroUI/images/peragro.png'></a>");
   $(".ganttButtonBar div").addClass('buttons');
   //overwrite with localized ones
   loadI18n();
@@ -117,14 +117,14 @@ $(function() {
 
 
   //fill default Teamwork roles if any
-  if (!ge.roles || ge.roles.length == 0) {
-    setRoles();
-  }
+  // if (!ge.roles || ge.roles.length == 0) {
+  //   setRoles();
+  // }
 
   //fill default Resources roles if any
-  if (!ge.resources || ge.resources.length == 0) {
-    setResource();
-  }
+  // if (!ge.resources || ge.resources.length == 0) {
+  //   setResource();
+  // }
 
 
   /*/debug time scale
@@ -237,36 +237,7 @@ function saveGanttOnServer() {
 }
 
 
-//-------------------------------------------  Create some demo data ------------------------------------------------------
-function setRoles() { 
-  ge.roles = [
-    {
-      id:"tmp_1",
-      name:"Project Manager"
-    },
-    {
-      id:"tmp_2",
-      name:"Worker"
-    },
-    {
-      id:"tmp_3",
-      name:"Stakeholder/Customer"
-    }
-  ];
-}
 
-function setResource() {
-  var res = [];
-  for (var i = 1; i <= 10; i++) {
-    res.push({id:"tmp_" + i,name:"Resource " + i});
-  }
-  ge.resources = res;
-}
-
-
-function editResources(){
-
-}
 
 function clearGantt() {
   ge.reset();
@@ -356,79 +327,15 @@ function getFile() {
 // }
 
 
-//-------------------------------------------  Open a black popup for managing resources. This is only an axample of implementation (usually resources come from server) ------------------------------------------------------
-
-function editResources(){
-
-  //make resource editor
-  var resourceEditor = $.JST.createFromTemplate({}, "RESOURCE_EDITOR");
-  var resTbl=resourceEditor.find("#resourcesTable");
-
-  for (var i=0;i<ge.resources.length;i++){
-    var res=ge.resources[i];
-    resTbl.append($.JST.createFromTemplate(res, "RESOURCE_ROW"))
-  }
-
-
-  //bind add resource
-  resourceEditor.find("#addResource").click(function(){
-    resTbl.append($.JST.createFromTemplate({id:"new",name:"resource"}, "RESOURCE_ROW"))
-  });
-
-  //bind save event
-  resourceEditor.find("#resSaveButton").click(function(){
-    var newRes=[];
-    //find for deleted res
-    for (var i=0;i<ge.resources.length;i++){
-      var res=ge.resources[i];
-      var row = resourceEditor.find("[resId="+res.id+"]");
-      if (row.size()>0){
-        //if still there save it
-        var name = row.find("input[name]").val();
-        if (name && name!="")
-          res.name=name;
-        newRes.push(res);
-      } else {
-        //remove assignments
-        for (var j=0;j<ge.tasks.length;j++){
-          var task=ge.tasks[j];
-          var newAss=[];
-          for (var k=0;k<task.assigs.length;k++){
-            var ass=task.assigs[k];
-            if (ass.resourceId!=res.id)
-              newAss.push(ass);
-          }
-          task.assigs=newAss;
-        }
-      }
-    }
-
-    //loop on new rows
-    resourceEditor.find("[resId=new]").each(function(){
-      var row = $(this);
-      var name = row.find("input[name]").val();
-      if (name && name!="")
-        newRes.push (new Resource("tmp_"+new Date().getTime(),name));
-    });
-
-    ge.resources=newRes;
-
-    closeBlackPopup();
-    ge.redraw();
-  });
-
-
-  var ndo = createBlackPage(400, 500).append(resourceEditor);
-}
-
+//------------------------------------------- ------------------------------------------------------
 
 </script>
 
 
 <div id="gantEditorTemplates" style="display:none;">
-  <div class="__template__" type="GANTBUTTONS"><!--
+  <div class="__template__" type="GANTBUTTONS">
   <div class="ganttButtonBar noprint">
-    <h1 style="float:left">task tree/gantt</h1>
+    <!-- img  src='/static/peragroUI/images/peragro.png'> --><h1 style='width:30px;'></h1>
     <div class="buttons">
     <button onclick="$('#workSpace').trigger('undo.gantt');" class="button textual" title="undo"><span class="teamworkIcon">&#39;</span></button>
     <button onclick="$('#workSpace').trigger('redo.gantt');" class="button textual" title="redo"><span class="teamworkIcon">&middot;</span></button>
@@ -445,17 +352,17 @@ function editResources(){
     <button onclick="$('#workSpace').trigger('zoomMinus.gantt');" class="button textual" title="zoom out"><span class="teamworkIcon">)</span></button>
     <button onclick="$('#workSpace').trigger('zoomPlus.gantt');" class="button textual" title="zoom in"><span class="teamworkIcon">(</span></button>
     <span class="ganttButtonSeparator"></span>
-    <button onclick="$('#workSpace').trigger('deleteCurrentTask.gantt');" class="button textual" title="delete"><span class="teamworkIcon">&cent;</span></button>
-    <span class="ganttButtonSeparator"></span>
-    <button onclick="print();" class="button textual" title="print"><span class="teamworkIcon">p</span></button>
+    <!-- <button onclick="$('#workSpace').trigger('deleteCurrentTask.gantt');" class="button textual" title="delete"><span class="teamworkIcon">&cent;</span></button> -->
+    <!-- <span class="ganttButtonSeparator"></span> -->
+   <!--  <button onclick="print();" class="button textual" title="print"><span class="teamworkIcon">p</span></button>
     <span class="ganttButtonSeparator"></span>
     <button onclick="ge.gantt.showCriticalPath=!ge.gantt.showCriticalPath; ge.redraw();" class="button textual" title="Critical Path"><span class="teamworkIcon">&pound;</span></button>
     <span class="ganttButtonSeparator"></span>
     <button onclick="editResources();" class="button textual" title="edit resources"><span class="teamworkIcon">M</span></button>
-      &nbsp; &nbsp; &nbsp; &nbsp;
+    -->   &nbsp; &nbsp; &nbsp; &nbsp;
       <button onclick="saveGanttOnServer();" class="button first big" title="save">save</button>
     </div></div>
-  --></div>
+  </div>
 
   <div class="__template__" type="TASKSEDITHEAD">
   <table class="gdfTable" cellspacing="0" cellpadding="0">
@@ -494,7 +401,7 @@ function editResources(){
     <td class="gdfCell"><input type="text" name="depends" value="(#=obj.depends#)" (#=obj.hasExternalDep?"readonly":""#)></td>
     
     <td class="gdfCell taskAssigs">(#=obj.getAssigsString()#)</td>
-    <td class="gdfCell"><input type="text" name="sex" value="(#=obj.sex?obj.sex:''#)"></td>
+    <td class="gdfCell"><input type="text" name="tasktype" value="(#=obj.sex?obj.sex:''#)"></td>
   
   </tr>
   --></div>
@@ -537,7 +444,7 @@ function editResources(){
   --></div>
 
 
-  <div class="__template__" type="TASK_EDITOR"><!--
+  <div class="__template__" type="TASK_EDITOR">
   <div class="ganttTaskEditor">
   <table width="100%">
     <tr>
@@ -585,17 +492,17 @@ function editResources(){
 
   <div style="text-align: right; padding-top: 20px"><button id="saveButton" class="button big">save</button></div>
   </div>
-  --></div>
+  </div>
 
 
-  <div class="__template__" type="ASSIGNMENT_ROW"><!--
-  <tr taskId="(#=obj.task.id#)" assigId="(#=obj.assig.id#)" class="assigEditRow" >
-    <td ><select name="resourceId"  class="formElements" (#=obj.assig.id.indexOf("tmp_")==0?"":"disabled"#) ></select></td>
+  <div class="__template__" type="ASSIGNMENT_ROW">
+<!--   <tr taskId="(#=obj.task.id#)" assigId="(#=obj.assig.id#)" class="assigEditRow" >
+    <td ><select name="resourceId"  class="formElements" (#=obj.assig.id#) ></select></td>
     <td ><select type="select" name="roleId"  class="formElements"></select></td>
     <td ><input type="text" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
     <td align="center"><span class="teamworkIcon delAssig" style="cursor: pointer">d</span></td>
-  </tr>
-  --></div>
+  </tr> -->
+  </div>
 
 
   <div class="__template__" type="RESOURCE_EDITOR"><!--

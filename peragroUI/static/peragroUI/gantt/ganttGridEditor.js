@@ -53,9 +53,9 @@ GridEditor.prototype.fillEmptyLines = function () {
         level = master.tasks[0].level + 1;
       }
 
-      //fill all empty previouses
+      //fill all empty previouses removed tmp
       emptyRow.prevAll(".emptyRow").andSelf().each(function () {
-        var ch = factory.build("tmp_fk" + new Date().getTime(), "", "", level, start, 1);
+        var ch = factory.build(new Date().getTime(), "", "", level, start, 1);
         var task = master.addTask(ch);
         lastTask = ch;
       });
@@ -566,10 +566,10 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     });
 
 
-    //bind add assignment
+    //bind add assignment removed tmp
     taskEditor.find("#addAssig").click(function () {
       var assigsTable = taskEditor.find("#assigsTable");
-      var assigRow = $.JST.createFromTemplate({task:task, assig:{id:"tmp_" + new Date().getTime()}}, "ASSIGNMENT_ROW");
+      var assigRow = $.JST.createFromTemplate({task:task, assig:{id: new Date().getTime()}}, "ASSIGNMENT_ROW");
       assigsTable.append(assigRow);
       $("#bwinPopupd").scrollTop(10000);
     });
@@ -634,8 +634,8 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
           }
         }
 
-        if (!found) { //insert
-          var ass = task.createAssignment("tmp_" + new Date().getTime(), resId, roleId, effort);
+        if (!found) { //insert removed tmp
+          var ass = task.createAssignment(new Date().getTime(), resId, roleId, effort);
           ass.touched = true;
         }
 

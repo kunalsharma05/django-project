@@ -377,19 +377,21 @@ def get_gantt_data(request, pid):
 					for a in AssignedResource_Relation.objects.filter(task=y):
 						assigned_list.append(a.id)
 					for i in x['assigs']:
-						list_from_json.append(int(i['id']))
-						if int(i['id']) in assigned_list:
+						# list_from_json.append(int(i['id']))
+						if i['id'] in assigned_list:
+							print(int(i['id']))
 							z = AssignedResource_Relation.objects.get(id = int(i['id']))
 							z.user = User.objects.get(id = int(i['resourceId']))
 							z.role = Role.objects.get(id = int(i['roleId']))
 							z.effort = i['effort']
 							z.save()
 							# x['assigs'].remove(i)
-						elif int(i['id']) not in assigned_list:
+						elif i['id'] not in assigned_list:
 							z = AssignedResource_Relation()
 							z.task = y
 							z.user = User.objects.get(id = int(i['resourceId']))
 							z.role = Role.objects.get(id = int(i['roleId']))
+							z.project = project
 							z.effort = i['effort']
 							z.save()	
 							# x['assigs'].remove(i)
@@ -415,7 +417,6 @@ def get_gantt_data(request, pid):
 		task_data['level']=x.level
 		task_data['status']=x.status
 		task_data['canWrite']=x.can_write
-		print('hi',x.start.timetuple())
 		task_data['start'] = int(time.mktime(x.start.timetuple())*1000)
 		task_data['end']= int(time.mktime(x.end.timetuple())*1000)
 		dt = x.end-x.start
@@ -459,6 +460,9 @@ def get_gantt_data(request, pid):
 def ganttview(request, pid):
 	project = Project.objects.get(id = pid)
 	return render(request,'gantt.html',{'id':pid})	
+
+
+
 # @login_required
 # @csrf_exempt
 # def media_image(request):
