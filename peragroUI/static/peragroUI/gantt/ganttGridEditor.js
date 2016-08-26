@@ -465,7 +465,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
   taskEditor.find("#code").val(task.code);
   taskEditor.find("#progress").val(task.progress ? parseFloat(task.progress) : 0);
   taskEditor.find("#status").attr("status", task.status);
-
+  taskEditor.find("#type").val(task.type)
   if (task.startIsMilestone)
     taskEditor.find("#startIsMilestone").attr("checked", true);
   if (task.endIsMilestone)
@@ -500,6 +500,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
     var dur = parseInt(taskEditor.find("#duration").val());
     date.clearTime();
     taskEditor.find("#end").val(new Date(computeEndByDuration(date.getTime(), dur)).format());
+    console.log('end in editor',new Date(computeEndByDuration(date.getTime(), dur)).format());
   }
 
   function endChangeCallback(end) {
@@ -512,6 +513,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
       taskEditor.find("#start").val(new Date(computeStart(start)).format());
     } else {
       taskEditor.find("#duration").val(recomputeDuration(start.getTime(), end.getTime()));
+      console.log('dur',recomputeDuration(start.getTime(), end.getTime()),end)
     }
   }
 
@@ -602,6 +604,9 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
       task.duration = parseInt(taskEditor.find("#duration").val());
       task.startIsMilestone = taskEditor.find("#startIsMilestone").is(":checked");
       task.endIsMilestone = taskEditor.find("#endIsMilestone").is(":checked");
+      console.log('yo',task.duration);
+      task.type = taskEditor.find("#type").val();
+      // console.log('ji',task.type);
 
       //set assignments
       taskEditor.find("tr[assigId]").each(function () {
@@ -649,7 +654,7 @@ GridEditor.prototype.openFullEditor = function (task, taskRow) {
       });
 
       //change dates
-      task.setPeriod(Date.parseString(taskEditor.find("#start").val()).getTime(), Date.parseString(taskEditor.find("#end").val()).getTime() + (3600000 * 24));
+      task.setPeriod(Date.parseString(taskEditor.find("#start").val()).getTime(), Date.parseString(taskEditor.find("#end").val()).getTime());
 
       //change status
       task.changeStatus(taskEditor.find("#status").attr("status"));

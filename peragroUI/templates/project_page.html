@@ -163,7 +163,7 @@
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2>{{project_ob.name}}</h2>
+                    <h2>{{project_ob.name}}</h2>  <button class='btn btn-round btn-success' style="float: right;" id = 'gviewer'>View Gantt Chart</button>
                     <ul class="nav navbar-right panel_toolbox">
                       <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                       </li>
@@ -176,8 +176,7 @@
                           </li> -->
                         </ul>
                       </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
+                    
                     </ul>
                     <div class="clearfix"></div>
                   </div>
@@ -193,7 +192,11 @@
                           </li>
                           <li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">View Media</a>
                           </li>
-                          <li role="presentation" class=""><a href="#tab_content4" role="tab" id="task-tab" data-toggle="tab" aria-expanded="false">Manage Tasks</a>
+                          <li role="presentation" class=""><a href="#tab_content4" role="tab" id="task-tab" data-toggle="tab" aria-expanded="false">Manage Roles</a>
+                          </li>
+                          <li role="presentation" class=""><a href="#tab_content5" role="tab" id="task-tab" data-toggle="tab" aria-expanded="false">Assign Tasks</a>
+                          </li>
+                          <li role="presentation" class=""><a href="#tab_content6" role="tab" id="task-tab" data-toggle="tab" aria-expanded="false">Manage Tasks</a>
                           </li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
@@ -242,18 +245,18 @@
                             <div class="x_content">
 
                     <div class="row">
-
+                    
                       <p>All project media for {{project_ob.name}}</p>
                       {% for x in project_media %}
                       <div class="col-md-55">
                         <div class="thumbnail">
-                          <div class="image view view-first">
-                            <img style="width: 100%; display: block;" src="{{x.media.url}}" alt="image" />
+                          <div class="image view view-first" mimetype="{{x.mimetype}}" mediasrc="{{x.media.url}}" moredata="{{x.file_description.metadata.width}}">
+                            <img style="width: 100%; display: block;" src="{{x.media.url}}" id="{{x.id}}" alt="image" />
                             <div class="mask">
                               <p></p>
                               <div class="tools tools-bottom">
-                                <a href="#"><i class="fa fa-link"></i></a>
-                                <a href="#"><i class="fa fa-pencil"></i></a>
+                                <a href="{{x.media.url}}/"><i class="fa fa-link"></i></a>
+                                <a href="/media/{{x.id}}/"><i class="fa fa-pencil"></i></a>
                                 <!-- <a href="#"><i class="fa fa-times"></i></a> -->
                               </div>
                             </div>
@@ -274,42 +277,39 @@
                                   <div class="x_title">
                                     <h2>View/Change Roles</h2>                                                             
                                     <div class="clearfix"></div>
-                                </div>
+                                  </div>
 
 
-                              <div class="x_content">
-                                <table class="table table-hover">
-                                 <thead>
-                                    <tr>
-                                      <th>#</th>
-                                      <th>Role</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <form method="POST" action=".">
-                                    {% for x in roles %}
-                                    <tr>
-                                      <td>{{forloop.counter}}</td>
-                                      <td><input type="text" name="{{x.id}}" value="{{x.name}}" /></td>
-                                    </tr>
-                                    {% endfor %}
-                                    <tr>
-                                    <td>Add a Role</td>
-                                    <td><input type="text" name="new_role"/></td> 
-                                    </tr>
-                                    
-
-                                  </tbody>
-                                      
-                                </table>
-                                  <input type="submit" name="save_role" value="save"/>
-                                    </form>
+                                  <div class="x_content">
+                                    <table class="table table-hover">
+                                     <thead>
+                                        <tr>
+                                          <th>#</th>
+                                          <th>Role</th>
+                                          <th>Edit</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <!-- <form method="POST" action="."> -->
+                                        {% for x in roles %}
+                                        <tr>
+                                          <td>{{forloop.counter}}</td>
+                                          <td>{{x.name}}</td>
+                                          <td><button class="btn btn-round btn-info"  data-toggle="modal" data-target="#editrole{{x.id}}_Modal"><i class="fa fa-edit m-right-xs"></i>Edit Role</button></td>
+                                        </tr>
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
+                                    <button class="btn btn-round btn-success"  data-toggle="modal" data-target="#newrole_Modal"><i class="fa fa-edit m-right-xs"></i>Add Role</button>  
+                                      <!-- </form> -->
 
                               <!-- <h1>View Taks:</h1> -->
+                                  </div>
+                                </div>
                               </div>
-                            </div>
 
-                            <div class="x_panel" style="border: 0px;">
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="task-tab">
+                                <div class="x_panel" style="border: 0px;">
                                   <div class="x_title">
                                     <h2>View/Change Relations</h2>                                                             
                                     <div class="clearfix"></div>
@@ -324,90 +324,87 @@
                                       <th>Task</th>
                                       <th>User</th>
                                       <th>Role</th>
-                                      <th>Effort</th>
+                                      <th>Effort (in hours)</th>
+                                      <th>Edit</th>
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    <form method="POST" action=".">
                                     {% for x in relation_list %}
                                     <tr>
                                       <td>{{forloop.counter}}</td>
-                                        <td><select name="{{x.id}}" >
-                                          {% for y in task_list %}
-                                            {% if x.task.id == y.id %}
-                                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
-                                            {% else %}
-                                              <option value='{{y.id}}'>{{y.name}}</option>
-                                            {% endif %}
-                                          {% endfor %}
-                                        </select></td>
-                                    
-
-                                      <td><select name="{{x.id}}_user">
-                                          {% for y in members_list %}
-                                            {% if x.user.id == y.id %}
-                                              <option value='{{y.id}}' selected="selected">{{y.username}}</option>
-                                            {% else %}
-                                              <option value='{{y.id}}'>{{y.username}}</option>
-                                            {% endif %}
-                                          {% endfor %}
-                                        </select>
-                                      </td>
-                                    
-                                      <td><select name="{{x.id}}_role">
-                                          {% for y in roles %}
-                                            {% if x.role.id == y.id %}
-                                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
-                                            {% else %}
-                                              <option value='{{y.id}}'>{{y.name}}</option>
-                                            {% endif %}
-                                          {% endfor %}
-                                        </select>
-                                      </td>
-                                    <td><input type="number" name="{{x.id}}_effort" value="{{x.effort}}" data-validate-minmax="0,9999" /></td>
+                                      <td><a href='/gantt/{{project_ob.id}}'>{{x.task}}</td>
+                                      <td><a href='/dashboard/{{x.user}}/'>{{x.user}}</td>
+                                      
+                                      <td>{{x.role}}</td>
+                                      
+                                    <td>{{x.effort}}</td>
+                                    <td><button class="btn btn-round btn-info"  data-toggle="modal" data-target="#editrelation{{x.id}}_Modal"><i class="fa fa-edit m-right-xs"></i>Edit Assignment</button></td>
 
                                     </tr>
                                     
                                     {% endfor %}
-
-
-
-                                      
-                                    <tr>
-                                    <td><input type="checkbox" name="add_new_relation" id="add_new_relation" /></td>
-                                    <td><select name="new_task">
-                                          {% for y in task_list %}
-                                          <option value='{{y.id}}'>{{y.name}}</option>
-                                          {% endfor %}
-                                        </select></td>
-                                      <td><select name="new_user">
-                                          {% for y in members_list %}
-                                          <option value='{{y.id}}'>{{y.username}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </td>
-                                      <td><select name="new_role">
-                                          {% for y in roles %}
-                                          <option value='{{y.id}}'>{{y.name}}</option>
-                                          {% endfor %}
-                                        </select>
-                                      </td>
-                                      
-                                      <td><input type="number" id="new_effort" name="new_effort" value="" data-validate-minmax="0,9999" /></td>
-                                    </tr> 
-                                    
-                                    
-
                                   </tbody>
                                       
                                 </table>
-                                  <input type="submit" class="btn btn-round btn-success" name="save_relation" value="Save"/>
+                                    <button class="btn btn-round btn-success"  data-toggle="modal" data-target="#newrelation_Modal"><i class="fa fa-edit m-right-xs"></i>Assign Tasks</button>  
                                     </form>
 
                               <!-- <h1>View Taks:</h1> -->
                               </div>
                             </div>
-                          </div><!-- for panel 4 -->   
+                          </div><!-- for panel 5 -->   
+
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="task-tab">
+                                <div class="x_panel" style="border: 0px;">
+                                  <div class="x_title">
+                                    <h2>View/Change Tasks</h2>                                                             
+                                    <div class="clearfix"></div>
+                                </div>
+
+
+                              <div class="x_content">
+                                <table class="table table-hover">
+                                 <thead>
+                                    <tr>
+                                      <th>#</th>
+                                      <th>Id</th>
+                                      <th>Name</th>
+                                      <th>Code</th>
+                                      <th>Author</th>
+                                      <th>Summary</th>
+                                      <th>Status</th>
+                                      <th>Priority</th>
+                                      <th>Type</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for x in task_list %}
+                                    <tr>
+                                      <td>{{forloop.counter}}</td>
+                                      <td>{{x.id}}</td>
+                                      <td>{{x.name}}</td>
+                                      <td>{{x.short_name}}</td>
+                                      <td><a href='dashboard/{{x.author}}/'>{{x.author}}</td>
+                                      <td>{{x.summary}}</td>
+                                      <td>{{x.status}}</td>
+                                      <td>{{x.priority}}</td>
+                                      <td>{{x.type}}</td>
+                                    <!-- <td>{{x.effort}}</td> -->
+                                    <td><button class="btn btn-round btn-info"  data-toggle="modal" data-target="#edittask{{x.id}}_Modal"><i class="fa fa-edit m-right-xs"></i>Edit Task</button></td>
+
+                                    </tr>
+                                    
+                                    {% endfor %}
+                                  </tbody>
+                                      
+                                </table>
+                                    <button class="btn btn-round btn-success"  data-toggle="modal" data-target="#newtask_Modal"><i class="fa fa-edit m-right-xs"></i>Create a new Task</button>  
+                                    </form>
+
+                              <!-- <h1>View Taks:</h1> -->
+                              </div>
+                            </div>
+                          </div><!-- for panel 5 -->                         
                         </div>
                       </div>
                     </div>
@@ -430,6 +427,406 @@
         </footer>
         <!-- /footer content -->
       </div>
+    </div>
+    <!-- Here are the modals for editting data -->
+{% for x in roles %}
+<div id="editrole{{x.id}}_Modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Role (ID : {{x.id}})</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <form id="edot_role" method="POST" action="." name="edit_role" data-parsley-validate>
+                      <label>Name:</label>
+                      <input type="text" class="form-control" name="name" value="{{x.name}}" required />
+
+                      <!-- <label>Last Name:</label> -->
+                  <input type="hidden" class="form-control" name="id" value="{{x.id}}" required />
+                      
+            <!-- <label>Description:</label> -->
+                        <!-- <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="You need to enter at least a 20 caracters long description." -->
+                            <!-- data-parsley-validation-threshold="10">{{user_profile.description}}</textarea> -->
+
+                      
+
+                      
+                          <br/>
+                          <input value="Update" type="submit" name="update-role" class="btn btn-primary" />
+                          <input value="Delete" type="submit" name="delete-role" class="btn btn-danger" />
+
+                    </form>
+                    <!-- end form for validations -->
+
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
+  </div>
+{% endfor %}
+
+    <!-- end of modal for changing roles-->
+<!-- modal for creating roles -->
+<div id="newrole_Modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Create New Role</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <form id="edot_role" method="POST" action="." name="edit_role" data-parsley-validate>
+                      
+                        <label>Name:</label>
+                          <input type="text" class="form-control" name="name" required />
+                  
+                  <input type="hidden" class="form-control" name="id" value="{{x.id}}" required />
+                      
+            <!-- <label>Description:</label> -->
+                        <!-- <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="You need to enter at least a 20 caracters long description." -->
+                            <!-- data-parsley-validation-threshold="10">{{user_profile.description}}</textarea> -->
+
+                      
+
+                      
+                          <br/>
+                          <input value="Save" type="submit" name="new-role" class="btn btn-primary" />
+                          <!-- <input value="Delete" type="submit" name="delete-role" class="btn btn-danger" /> -->
+
+                    </form>
+                    <!-- end form for validations -->
+
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
+    </div>
+    <!-- end of modal -->
+<!-- Here are the modals for editting data -->
+{% for x in relation_list %}
+<div id="editrelation{{x.id}}_Modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Task Assignment (ID : {{x.id}})</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <form id="edot_role" method="POST" action="." name="edit_role" data-parsley-validate>
+                      <label>Task:</label>
+                        <select name="task" >
+                          {% for y in task_list %}
+                            {% if x.task.id == y.id %}
+                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
+                            {% else %}
+                              <option value='{{y.id}}'>{{y.name}}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                        <label>User:</label>
+                        <select name="user">
+                            {% for y in members_list %}
+                              {% if x.user.id == y.id %}
+                                <option value='{{y.id}}' selected="selected">{{y.username}}</option>
+                              {% else %}
+                                <option value='{{y.id}}'>{{y.username}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                        <label>Role:</label>
+                        <select class="" name="role">
+                            {% for y in roles %}
+                              {% if x.role.id == y.id %}
+                                <option value='{{y.id}}' selected="selected">{{y.name}}</option>
+                              {% else %}
+                                <option value='{{y.id}}'>{{y.name}}</option>
+                              {% endif %}
+                            {% endfor %}
+                          </select>
+                          <label>Effort:(in hours)</label>
+                            <input type="number" name="effort" value="{{x.effort}}" step="0.1" data-validate-minmax="0,9999" />
+
+                      <!-- <label>Last Name:</label> -->
+                  <input type="hidden" class="form-control" name="id" value="{{x.id}}" required />
+                      
+            <!-- <label>Description:</label> -->
+                        <!-- <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="You need to enter at least a 20 caracters long description." -->
+                            <!-- data-parsley-validation-threshold="10">{{user_profile.description}}</textarea> -->
+
+                      
+
+                      
+                          <br/>
+                          <input value="Update" type="submit" name="update-rel" class="btn btn-primary" />
+                          <input value="Delete" type="submit" name="delete-rel" class="btn btn-danger" />
+
+                    </form>
+                    <!-- end form for validations -->
+
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
+    </div>
+{% endfor %}
+    <!-- end of modal for changing assignments-->
+<!-- modal for staert new assig -->
+<div id="newrelation_Modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Create Task Assignment</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <form id="edot_role" method="POST" action="." name="edit_role" data-parsley-validate>
+                      <label>Task:</label>
+                        <select name="task" >
+                          {% for y in task_list %}
+                          <option value='{{y.id}}'>{{y.name}}</option>
+                          {% endfor %}
+                        </select>
+                        <label>User:</label>
+                        <select name="user">
+                          {% for y in members_list %}
+                            <option value='{{y.id}}'>{{y.username}}</option>
+                          {% endfor %}
+                          </select>
+                        <label>Role:</label>
+                        <select class="" name="role">
+                             {% for y in roles %}
+                            <option value='{{y.id}}'>{{y.name}}</option>
+                            {% endfor %}
+                          </select>
+                          <label>Effort:(in hours)</label>
+                            <input type="number" name="effort"  step="0.1" data-validate-minmax="0,9999" required/>
+
+                      <!-- <label>Last Name:</label> -->
+                  <input type="hidden" class="form-control" name="id" value="{{x.id}}" required />
+                      
+            <!-- <label>Description:</label> -->
+                        <!-- <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="100" data-parsley-minlength-message="You need to enter at least a 20 caracters long description." -->
+                            <!-- data-parsley-validation-threshold="10">{{user_profile.description}}</textarea> -->
+
+                      
+
+                      
+                          <br/>
+                          <input value="Create Assignment" type="submit" name="new-rel" class="btn btn-primary" />
+
+
+                    </form>
+                    <!-- end form for validations -->
+
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
+    </div>
+<!-- End of add new assog -->
+{% for x in task_list %}
+<div id="edittask{{x.id}}_Modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Task (ID : {{x.id}})</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <form id="edit_task" method="POST" action="." name="edit_task" data-parsley-validate>
+                         <label>Name:</label>
+                          <input type="text" class="form-control" name="name" value="{{x.name}}" required />
+
+                          <label>Short Name:</label>
+                          <input type="text" class="form-control" name="short-name" value="{{x.short_name}}" required />
+                         
+                         <label>Level:</label>
+                         <input type="number" class="form-control" name="level" value="{{x.level}}" step="1" data-validate-minmax="0,9999" required/>
+                         <label>Summary:</label>
+                          <input type="text" class="form-control" name="summary" value="{{summary}}" data-parsley-maxlength="64" data-parsley-minlength-message="Summary can only be 64 characters long" required="required" />
+                         
+                        <label>Description:</label>
+                          <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="500" data-parsley-minlength-message="You need to enter at least a 20 caracters long description."
+                              data-parsley-validation-threshold="10">{{x.description}}</textarea> 
+                        <label>Status:</label>
+                        <select name="status" class="form-contorl" value="{{x.status}}">
+                        <option value='STATUS_ACTIVE'>Active</option>
+                        <option value='STATUS_FAILED'>Failed</option>
+                        <option value='STATUS_SUSPENDED'>Suspended</option>
+                        <option value='STATUS_UNDEFINED'>Undefined</option>
+                        <option value='STATUS_DONE'>Completed</option>
+                        </select>
+
+                        <label>Priority:</label>
+                        <select name="priority" >
+                          {% for y in priority_list %}
+                            {% if x.priority.id == y.id %}
+                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
+                            {% else %}
+                              <option value='{{y.id}}'>{{y.name}}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+                        
+                        <label>Type:</label>
+                        <select name="type" >
+                          {% for y in type_list %}
+                            {% if x.type.id == y.id %}
+                              <option value='{{y.id}}' selected="selected">{{y.name}}</option>
+                            {% else %}
+                              <option value='{{y.id}}'>{{y.name}}</option>
+                            {% endif %}
+                          {% endfor %}
+                        </select>
+
+                        <label>Start Is Milestone:</label>
+                        <input type="checkbox" name="start-is-milestone" {% if x.start_is_milestone %} checked {% endif %} vlue="start-is-milestone">
+                        <label>End Is Milestone:</label>
+                        <input type="checkbox" name="end-is-milestone" {% if x.end_is_milestone %} checked {% endif %} vlue="end-is-milestone">
+
+                        <label>Has Child:</label>
+                        <input type="checkbox" name="has-child" {% if x.has_child %} checked {% endif %} vlue="has-child">
+                        
+                        <label>Can Write:</label>
+                        <input type="checkbox" name="can-write" {% if x.can_write %} checked {% endif %} vlue="can-write">
+                        </br>
+                         <label>Depends:</label>
+                          <input type="text" class="form-control" name="depends" value="{{x.depends}}" />
+
+                      <!-- <label>Last Name:</label> -->
+                  <input type="hidden" class="form-control" name="id" value="{{x.id}}" required />
+                      
+
+                      
+
+                      
+                          <br/>
+                          <input value="Update" type="submit" name="update-task" class="btn btn-primary" />
+                          <input value="Delete" type="submit" name="delete-task" class="btn btn-danger" />
+
+                    </form>
+                    <!-- end form for validations -->
+
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
+    </div>
+{% endfor %}
+   <div id="newtask_Modal" class="modal fade" role="dialog"> 
+  <div class="modal-dialog modal-lg">
+        <div class="right_col" role="main">
+          <div class="">
+           <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Edit Task (ID : {{x.id}})</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <!-- start form for validation -->
+                    <form id="edot_role" method="POST" action="." name="edit_role" data-parsley-validate>
+                         <label>Name:</label>
+                          <input type="text" class="form-control" name="name"  required />
+
+                          <label>Short Name:</label>
+                          <input type="text" class="form-control" name="short-name"  required />
+                         
+                         <label>Level:</label>
+                         <input type="number" class="form-control" name="level"  step="1" data-validate-minmax="0,9999" required/>
+                         <label>Summary:</label>
+                          <input type="text" class="form-control" name="summary" data-parsley-maxlength="64" data-parsley-minlength-message="Summary can only be 64 characters long" required="required" />
+                         
+                        <label>Description:</label>
+                          <textarea required="required" class="form-control" name="description" data-parsley-trigger="keyup" data-parsley-minlength="20" data-parsley-maxlength="500" data-parsley-minlength-message="You need to enter at least a 20 caracters long description."
+                              data-parsley-validation-threshold="10"></textarea> 
+                        <label>Status:</label>
+                        <select name="status" class="form-contorl" >
+                        <option value='STATUS_ACTIVE'>Active</option>
+                        <option value='STATUS_FAILED'>Failed</option>
+                        <option value='STATUS_SUSPENDED'>Suspended</option>
+                        <option value='STATUS_UNDEFINED'>Undefined</option>
+                        <option value='STATUS_DONE'>Completed</option>
+                        </select>
+
+                        <label>Priority:</label>
+                        <select name="priority" >
+                          {% for y in priority_list %}
+                              <option value='{{y.id}}'>{{y.name}}</option>
+                            
+                          {% endfor %}
+                        </select>
+                        
+                        <label>Type:</label>
+                        <select name="type" >
+                          {% for y in type_list %}
+                              <option value='{{y.id}}'>{{y.name}}</option>
+                          {% endfor %}
+                        </select>
+
+                        <label>Start Is Milestone:</label>
+                        <input type="checkbox" name="start-is-milestone" value="start-is-milestone">
+                        <label>End Is Milestone:</label>
+                        <input type="checkbox" name="end-is-milestone" value="end-is-milestone">
+
+                        <label>Has Child:</label>
+                        <input type="checkbox" name="has-child" value="has-child">
+                        
+                        <label>Can Write:</label>
+                        <input type="checkbox" name="can-write" checked value="can-write">
+                        </br>
+                         <label>Depends:</label>
+                          <input type="text" class="form-control" name="depends" />
+
+                    
+                      
+
+                      
+
+                      
+                          <br/>
+                          <input value="Save" type="submit" name="new-task" class="btn btn-primary" />
+
+                    </form>
+                    <!-- end form for validations -->
+
+                  </div>
+                </div>
+      </div>
+    </div>
+    </div>
+
     </div>
 
     <!-- jQuery -->
@@ -454,11 +851,13 @@
     
     <script src="{% static 'peragroUI/css/vendors/dropzone/dist/min/dropzone.min.js' %}"></script>
 <script type="text/javascript">
-if(document.getElementById("add_new_relation").toggle){
-  document.getElementById("new_effort").required;
-}
 
-    Dropzone.autoDiscover = false;
+document.getElementById('gviewer').onclick = (function(){
+
+  window.location.replace('/gantt/{{project_ob.id}}/');
+  });    
+
+    Dropzone.autoDiscover = true;
     $('.dropzone').dropzone ({
         url: ".",
         init: function() {
@@ -466,12 +865,40 @@ if(document.getElementById("add_new_relation").toggle){
                 formData.append("author_name", "{{project_ob.author}}")
                 formData.append("project_slug", "{{project_ob.slug}}")
             }),
-              this.on('completemultiple', function () {
+              this.on('success', function () {
+                console.log("hi");
                 window.location.href="../{{project_ob.slug}}/";
             
               });
         },
     });
+
+
+// document.getElementById('nice').onclick = (function(){
+//         for(var i = 0;i<document.getElementsByClassName('image view view-first').length; i++){
+
+//       var mediaDiv = document.getElementsByClassName('image view view-first')[i];
+//       if(mediaDiv.getAttribute('mimetype').substr(0,5) == 'video'){
+//         var video = document.createElement('video');
+//         video.src = mediaDiv.getAttribute('mediasrc');
+//         var img = mediaDiv.getElementsByTagName('img')[0];
+
+        
+//         var b = document.createElement('canvas');
+//         b.width  = '250 px';
+//         b.height = '200 px';
+//         var ctx = b.getContext('2d');
+        
+//         ctx.drawImage(video, 0, 0, b.width, b.height);
+//         var imgData = b.toDataURL(0,0,b.width,b.height);
+//         console.log(imgData)  ;
+//         console.log();
+//         img.src = imgData;
+//       }
+      
+//     }
+//   });
+
   // var prof_flag=0
   // $("input#dp").on('change', function(e) {
   //       dp = e.target.files;

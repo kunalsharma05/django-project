@@ -225,9 +225,9 @@ GanttMaster.messages = {
 };
 
 
-GanttMaster.prototype.createTask = function (id, name, code, level, start, duration, sex) {
+GanttMaster.prototype.createTask = function (id, name, code, level, start, duration, type) {
   var factory = new TaskFactory();
-  return factory.build(id, name, code, level, start, duration, sex);
+  return factory.build(id, name, code, level, start, duration, type);
 };
 
 
@@ -356,7 +356,7 @@ GanttMaster.prototype.addTask = function (task, row) {
  * @param project
  */
 GanttMaster.prototype.loadProject = function (project) {
-  //console.debug("loadProject",project)
+  console.log("loadProject",project)
   this.beginTransaction();
   this.resources = project.resources;
   this.roles = project.roles;
@@ -403,7 +403,7 @@ GanttMaster.prototype.loadTasks = function (tasks, selectedRow) {
   for (var i = 0; i < tasks.length; i++) {
     var task = tasks[i];
     if (!(task instanceof Task)) {
-      var t = factory.build(task.id, task.name, task.code, task.level, task.start, task.duration, task.collapsed, task.sex);
+      var t = factory.build(task.id, task.name, task.code, task.level, task.start, task.duration, task.collapsed, task.type);
       for (var key in task) {
         if (key != "end" && key != "start")
           t[key] = task[key]; //copy all properties

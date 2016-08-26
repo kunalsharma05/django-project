@@ -33,7 +33,7 @@ import datetime
 from django_project import signals
 from django_project import filters as dp_filters
 from exceptions import *
-from damn_at import Analyzer, FileDescription, FileId, mimetypes
+from damn_at import Analyzer, FileDescription, FileId, mimetypes, Transcoder
 from damn_at.analyzer import *
 from damn_at.utilities import *
 from damn_at.analyzer import AnalyzerException
@@ -161,7 +161,10 @@ def project_page(request, author_name, project_slug):
 	roles = Role.objects.filter(project = project_ob)
 	task_list = TaskUI.objects.filter(project=project_ob)
 	relation_list = AssignedResource_Relation.objects.filter(project = project_ob)
-	
+	priority_list = Priority.objects.filter(project=project_ob)
+	type_list = TaskType.objects.filter(project=project_ob)
+
+
 
 	profile_list = []	
 	for x in members_list:
@@ -178,56 +181,203 @@ def project_page(request, author_name, project_slug):
 		'members_list':members_list,
 		'task_list':task_list,
 		'relation_list':relation_list,
+		'type_list':type_list,
+		'priority_list':priority_list,
 	}
 	if request.method == 'POST':
 		# for x in 
-		if request.POST.get('save_role'):
-			for key in request.POST.iterkeys():
-				if key == 'new_role':
-					if request.POST[key] != "":
-						role = Role()
-						role.name = request.POST[key]
-						role.project = project_ob
-						role.save()
-					else:
-						pass
-				elif key == 'save_role':
-					pass
-				else:
-					role = Role.objects.get(id = int(key))
-					role.name = request.POST[key]
-					role.save()
+		if request.POST.get('update-role'):
+			role = Role.objects.get(id = int(request.POST['id']))
+			role.name = request.POST['name']
+			role.save()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('delete-role'):
+			role = Role.objects.get(id = int(request.POST['id']))
+			role.delete()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('new-role'):
+			role = Role()
+			role.name = request.POST['name']
+			role.project = project_ob
+			role.save()
+			return HttpResponseRedirect('.')
 		
-		elif request.POST.get('save_relation'):
-			flag = 0
-			for key in request.POST.iterkeys():
-				if key in ['new_task','new_role','new_effort','new_user']:
-					if flag == 0:
-						if request.POST.get('add_new_relation'):	
-							flag = 1
-							rel = AssignedResource_Relation()
-							rel.project = project_ob
-							rel.task = TaskUI.objects.get(id = int(request.POST['new_task']))
-							rel.user = User.objects.get(id = int(request.POST['new_user']))
-							rel.role = Role.objects.get(id = int(request.POST['new_role']))
-							rel.effort = request.POST['new_effort'] 
-							action.send(rel.user, verb='assigned', action_object=rel.role, target=rel.task)
-							rel.save()
-						else:
-							pass
-				elif key == 'save_relaltion':
-					pass
-				else:
-					for rel in relation_list:
-						if str(rel.id) == key:
-							rel.task = TaskUI.objects.get(id = int(request.POST[key]))
-							rel.role = Role.objects.get(id = int(request.POST[key+'_role']))
-							rel.user = User.objects.get(id = int(request.POST[key+'_user']))
-							rel.effort = int(request.POST[key+'_effort'])
-							rel.save()
+		elif request.POST.get('update-rel'):
+			rel = AssignedResource_Relation.objects.get(id = int(request.POST['id']))
+			rel.task = TaskUI.objects.get(id = int(request.POST['task']))
+			rel.user = User.objects.get(id = int(request.POST['user']))
+			rel.role = Role.objects.get(id = int(request.POST['role']))
+			rel.effort = request.POST['effort'] 
+			rel.save()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('delete-rel'):
+			rel = AssignedResource_Relation.objects.get(id = int(request.POST['id']))
+			rel.delete()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('new-rel'):
+			rel = AssignedResource_Relation.objects.get(id = int(request.POST['id']))
+			rel.task = TaskUI.objects.get(id = int(request.POST['task']))
+			rel.user = User.objects.get(id = int(request.POST['user']))
+			rel.role = Role.objects.get(id = int(request.POST['role']))
+			rel.effort = request.POST['effort'] 
+			rel.project = project_ob
+			rel.save()
+			return HttpResponseRedirect('.')
+	
+		elif request.POST.get('update-task'):	
+			task = TaskUI.objects.get(id = int(request.POST['id']))
+			task.name = request.POST['name']
+			task.short_name = request.POST['short-name']
+			task.level = request.POST['level']
+			task.summary = request.POST['summary']
+			task.description = request.POST['description']
+			task.status = request.POST['status']
+			task.priority = Priority.objects.get(id = int(request.POST['priority']))
+			task.type = TaskType.objects.get(id = int(request.POST['type']))
+			if request.POST.get('start-is-milestone'):
+				task.start_is_milestone = True
+			else:
+				pass
+			if request.POST.get('end-is-milestone'):
+				task.end_is_milestone = True
+			else:
+				pass
+			if request.POST.get('has-child'):
+				task.start_is_milestone = True
+			else:
+				pass
+			if request.POST.get('can-write'):
+				task.start_is_milestone = True
+			else:
+				pass
+			task.depends = request.POST['depends']
+			task.save()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('del-task'):	
+			task = TaskUI.objects.get(id = int(request.POST['id']))
+			task.delete()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('update-task'):	
+			task = TaskUI.objects.get(id = int(request.POST['id']))
+			task.name = request.POST['name']
+			task.short_name = request.POST['short-name']
+			task.level = request.POST['level']
+			task.summary = request.POST['summary']
+			task.description = request.POST['description']
+			task.status = request.POST['status']
+			task.priority = Priority.objects.get(id = int(request.POST['priority']))
+			task.type = TaskType.objects.get(id = int(request.POST['type']))
+			if request.POST.get('start-is-milestone'):
+				task.start_is_milestone = True
+			else:
+				pass
+			if request.POST.get('end-is-milestone'):
+				task.end_is_milestone = True
+			else:
+				pass
+			if request.POST.get('has-child'):
+				task.start_is_milestone = True
+			else:
+				pass
+			if request.POST.get('can-write'):
+				task.start_is_milestone = True
+			else:
+				pass
+			task.depends = request.POST['depends']
+			task.save()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('del-task'):	
+			task = TaskUI.objects.get(id = int(request.POST['id']))
+			task.delete()
+			return HttpResponseRedirect('.')
+
+		elif request.POST.get('new-task'):	
+			task = TaskUI()
+			task.name = request.POST['name']
+			task.short_name = request.POST['short-name']
+			task.project = request.POST['project']
+			task.author = request.POST['author']
+			task.level = request.POST['level']
+			task.summary = request.POST['summary']
+			task.description = request.POST['description']
+			task.status = request.POST['status']
+			task.priority = Priority.objects.get(id = int(request.POST['priority']))
+			task.type = TaskType.objects.get(id = int(request.POST['type']))
+			task.project = project_ob
+			task.author = request.user
+			if request.POST.get('start-is-milestone'):
+				task.start_is_milestone = True
+			else:
+				pass
+			if request.POST.get('end-is-milestone'):
+				task.end_is_milestone = True
+			else:
+				pass
+			if request.POST.get('has-child'):
+				task.start_is_milestone = True
+			else:
+				pass
+			if request.POST.get('can-write'):
+				task.start_is_milestone = True
+			else:
+				pass
+			task.depends = request.POST['depends']
+			task.save()
+			return HttpResponseRedirect('.')
+
+		# elif request.POST.get() 
+			# for key in request.POST.iterkeys():
+			# 	v
+			# 	if key == 'new_role':
+			# 		if request.POST[key] != "":
+			# 			role = Role()
+			# 			role.name = request.POST[key]
+			# 			role.project = project_ob
+			# 			role.save()
+			# 		else:
+			# 			pass
+			# 	elif key == 'save_role':
+			# 		pass
+			# 	else:
+			# 		role.name = request.POST[key]
+			# 		role.save()
+		
+		# elif request.POST.get('save_relation'):
+		# 	flag = 0
+		# 	for key in request.POST.iterkeys():
+		# 		if key in ['new_task','new_role','new_effort','new_user']:
+		# 			if flag == 0:
+		# 				if request.POST.get('add_new_relation'):	
+		# 					flag = 1
+		# 					rel = AssignedResource_Relation()
+		# 					rel.project = project_ob
+		# 					rel.task = TaskUI.objects.get(id = int(request.POST['new_task']))
+		# 					rel.user = User.objects.get(id = int(request.POST['new_user']))
+		# 					rel.role = Role.objects.get(id = int(request.POST['new_role']))
+		# 					rel.effort = request.POST['new_effort'] 
+		# 					action.send(rel.user, verb='assigned', action_object=rel.role, target=rel.task)
+		# 					rel.save()
+		# 				else:
+		# 					pass
+		# 		elif key == 'save_relaltion':
+		# 			pass
+		# 		else:
+		# 			for rel in relation_list:
+		# 				if str(rel.id) == key:
+		# 					rel.task = TaskUI.objects.get(id = int(request.POST[key]))
+		# 					rel.role = Role.objects.get(id = int(request.POST[key+'_role']))
+		# 					rel.user = User.objects.get(id = int(request.POST[key+'_user']))
+		# 					rel.effort = int(request.POST[key+'_effort'])
+							# rel.save()
 
 			# if request.POST.get('save_reelaltion'):
-			return HttpResponseRedirect('.')
 								# for x in roles:
 			# 	try:
 			# 		role = Role.objects.get(id = int(request.POST[x.id]))
@@ -250,6 +400,32 @@ def project_page(request, author_name, project_slug):
 				media_ob.hash = file_descr.hash
 				media_ob.save()
 				action.send(request.user, verb='uploaded', action_object=media_ob, target=project_ob)
+				# if 'video' in media_ob.mimetype:	
+				# 	transcdoer_path = MEDIA_ROOT
+				# 	transcoder = Transcoder(transcdoer_path)
+				# 	asset_name = get_asset_names_in_file_descr(file_descr)
+				# 	asset_name = asset_name[0]
+				# 	asset_id = find_asset_ids_in_file_descr(file_descr, asset_name)
+				# 	asset_id = asset_id[0]
+				# 	target_mimetype = transcoder.get_target_mimetype(media_ob.mimetype, 'image/jpeg')	
+				# 	height = file_descr.assets[0].metadata['height'].int_value
+				# 	width = file_descr.assets[0].metadata['width'].int_value
+				# 	duration = file_descr.assets[0].metadata['duration'].string_value					
+				# 	new_width = 200
+				# 	new_height = 200*(height/width)
+				# 	try:
+				# 		time = duration.split(':')
+				# 		time = eval(time[0])*3600 + eval(time[1])*60 + eval(time[2])
+				# 	except:
+				# 		time = duration.split('.')
+				# 		time = eval(time[0])
+				# 	if time < 10:
+				# 		options = {'second':-1,'size':(new_width,new_height)}
+				# 	else:
+				# 		options = {'second':5,'size':(new_width,new_height)}
+				# 	get_image = transcoder.transcode(file_descr, asset_id, target_mimetype, **options)
+				# 	media_ob.resource_link = get_image[0]
+				# 	media_ob.save()				 
 
 		return HttpResponse('done')
 	else:
@@ -370,6 +546,7 @@ def get_gantt_data(request, pid):
 					y.depends = x['depends']
 					y.collapsed = x['collapsed']
 					y.has_child = x['hasChild']
+					y.type = TaskType.objects.get(id = int(x['type']))
 					y.save()
 					assigned_list = []
 					list_from_json = []
@@ -377,7 +554,7 @@ def get_gantt_data(request, pid):
 					for a in AssignedResource_Relation.objects.filter(task=y):
 						assigned_list.append(a.id)
 					for i in x['assigs']:
-						# list_from_json.append(int(i['id']))
+						list_from_json.append(int(i['id']))
 						if i['id'] in assigned_list:
 							print(int(i['id']))
 							z = AssignedResource_Relation.objects.get(id = int(i['id']))
@@ -387,6 +564,7 @@ def get_gantt_data(request, pid):
 							z.save()
 							# x['assigs'].remove(i)
 						elif i['id'] not in assigned_list:
+							print('hi',i['id'])
 							z = AssignedResource_Relation()
 							z.task = y
 							z.user = User.objects.get(id = int(i['resourceId']))
@@ -400,9 +578,7 @@ def get_gantt_data(request, pid):
 						if a not in list_from_json:
 							z = AssignedResource_Relation.objects.get(id = a)
 							z.delete()
-		# return JsonResponse({'status':1})
-	else:
-		pass
+		return JsonResponse({'saved':'saved'})
 		# for x in post_data['tasks']:
 			# print x['id']
 
@@ -413,14 +589,16 @@ def get_gantt_data(request, pid):
 		task_data['sex']='female'
 		task_data['id']=x.id
 		task_data['name']=x.name
+		task_data['type']=x.type.id
 		task_data['code']=x.short_name
 		task_data['level']=x.level
 		task_data['status']=x.status
 		task_data['canWrite']=x.can_write
 		task_data['start'] = int(time.mktime(x.start.timetuple())*1000)
-		task_data['end']= int(time.mktime(x.end.timetuple())*1000)
+		# task_data['end']= int(time.mktime(x.end.timetuple())*1000)
 		dt = x.end-x.start
-		task_data['duration']= dt.days
+		task_data['duration']= dt.days+1
+		print(x.start,x.end,dt.days)
 		task_data['startIsMilestone']= x.start_is_milestone
 		task_data['endIsMilestone']= x.end_is_milestone
 		task_data['depends']=x.depends
@@ -459,7 +637,8 @@ def get_gantt_data(request, pid):
 @login_required	
 def ganttview(request, pid):
 	project = Project.objects.get(id = pid)
-	return render(request,'gantt.html',{'id':pid})	
+	task_type_list =  TaskType.objects.filter(project =project)
+	return render(request,'gantt.html',{'id':pid, 'task_type_list':task_type_list})	
 
 
 

@@ -310,19 +310,17 @@
 
   function load_comments(){
      {% for x in comments %}
+        {% if x.annotation %}
+
         (function(){
           var cv_anno = $('#{{x.id}}');
           var anno = String(cv_anno.attr('anno'));
-                      // var canvas = new fabric.Canvas('{{x.id}}');
-                    // canvas.loadFromJSON(anno, canvas.renderAll.bind(canvas));
            var videoObj = JSON.parse(anno);
             var width = videoObj['objects'][0]['width'];
             var height = videoObj['objects'][0]['height'];         
   
             var a = document.getElementById('d');
-            // var old_width = width;
-            console.log(width)
-            // var old_height = height;
+            // console.log(width)
             if(width>300){
               var scale = 300.00/width;
               final_width = width * scale;
@@ -334,23 +332,18 @@
 
             }
                                     
-                                     // canvas.setWidth(old_width);
-                                     // canvas.setHeight(old_height);
-
-                      // var scale = 0.5;
             var canvas1 = new fabric.Canvas('{{x.id}}');
             canvas1.setDimensions({
                 "width": final_width,
                 "height": final_height,
             })
-                      // var json = localStorage.getItem('save');
             canvas1.loadFromJSON(anno, function () {
                 canvas1.renderAll();
             });
           canvas1.setZoom(scale);
           canvas1.renderAll();
         })();
-                    
+        {% endif %}            
      {% endfor %}
           (function(){
           $.ajax({
@@ -359,7 +352,7 @@
               url: '../../media_description/{{media_ob.id}}',
          
               success : function(data) {
-                console.log(data);
+                // console.log(data);
                 var div1 = document.getElementById('data_title');
                 var div2 = document.getElementById('data_body');
 

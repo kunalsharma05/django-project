@@ -30,17 +30,17 @@ function TaskFactory() {
   /**
    * Build a new Task
    */
-  this.build = function(id, name, code, level, start, duration, collapsed, sex) {
+  this.build = function(id, name, code, level, start, duration, collapsed, type) {
     // Set at beginning of day
     var adjusted_start = computeStart(start);
     var calculated_end = computeEndByDuration(adjusted_start, duration);
-    console.log(duration,sex);
-    return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed, sex);
+    console.log(duration,type);
+    return new Task(id, name, code, level, adjusted_start, calculated_end, duration, collapsed, type);
   };
 
 }
 
-function Task(id, name, code, level, start, end, duration, collapsed, sex) {
+function Task(id, name, code, level, start, end, duration, collapsed, type) {
   this.id = id;
   this.name = name;
   this.progress=0;
@@ -56,7 +56,7 @@ function Task(id, name, code, level, start, end, duration, collapsed, sex) {
   this.end = end;
   this.startIsMilestone = false;
   this.endIsMilestone = false;
-  this.sex = sex;
+  this.type = type;
   this.collapsed = collapsed;
   
   this.rowElement; //row editor html element
@@ -97,7 +97,7 @@ Task.prototype.createAssignment = function (id, resourceId, roleId, effort) {
 
 //<%---------- SET PERIOD ---------------------- --%>
 Task.prototype.setPeriod = function (start, end) {
-  //console.debug("setPeriod ",this.name,new Date(start),new Date(end));
+  console.log("setPeriod ",this.name,new Date(start),new Date(end));
   //var profilerSetPer = new Profiler("gt_setPeriodJS");
 
   if (start instanceof Date) {

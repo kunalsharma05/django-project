@@ -27,9 +27,7 @@ class TaskUI(models.Model):
     name = models.CharField(max_length=256, null=True, blank=True)
     short_name = models.CharField(max_length=126, null=True, blank=True)
     project = models.ForeignKey(Project, verbose_name=_('project'))
-
-    author = models.ForeignKey(User, verbose_name=_('author'), blank=True)
-    
+    author = models.ForeignKey(User, verbose_name=_('author'), blank=True)  
     level = models.IntegerField(null=True)
     summary = models.CharField(_('summary'), max_length=64)
     description = models.TextField(_('description'))
@@ -48,7 +46,7 @@ class TaskUI(models.Model):
     depends = models.CharField(max_length=256,blank=True,null=True)
     collapsed = models.BooleanField(default=False)
     # milestone = ChainedForeignKey(Milestone, chained_field="project", chained_model_field="project", verbose_name=_('milestone'), null=True, blank=True)
-    component = ChainedForeignKey(Component, chained_field="project", chained_model_field="project", verbose_name=_('component'))
+    # component = ChainedForeignKey(Component, chained_field="project", chained_model_field="project", verbose_name=_('component'))
 
     created_at = models.DateTimeField(_('created at'), auto_now_add=True, editable=False)
 
@@ -67,7 +65,7 @@ class AssignedResource_Relation(models.Model):
     task = models.ForeignKey(TaskUI)
     user = models.ForeignKey(User)
     role = models.ForeignKey(Role)
-    effort = models.BigIntegerField(null=True)
+    effort = models.IntegerField(null=True, default=0)
     project = models.ForeignKey(Project, verbose_name=_('project'))
     def __unicode__(self):
             return self.task.project.name+':'+self.task.name+' '+self.user.username
@@ -83,14 +81,15 @@ def upload_manager(instance, filename):
 	return MEDIA_ROOT
 
 class MediaUpload(models.Model):
-	project = models.ForeignKey(Project, related_name='files_project', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='files_project', on_delete=models.CASCADE)
 	# owner = models.ForeignKey(User, on_delete=models.CASCADE)
-	media = models.FileField(upload_to=upload_manager)
-	mimetype = models.CharField(max_length=255, null=True, blank=True)
-	file_description = models.TextField()
-	hash = models.CharField(max_length=128, db_index=True)
-	def __unicode__(self):
-		return 'File: %s %s'%(self.media.name, self.mimetype)
+    media = models.FileField(upload_to=upload_manager)
+    resource_link = models.CharField(max_length = 1024, null=True)
+    mimetype = models.CharField(max_length=255, null=True, blank=True)
+    file_description = models.TextField()
+    hash = models.CharField(max_length=128, db_index=True)
+    def __unicode__(self):
+        return 'File: %s %s'%(self.media.name, self.mimetype)
 
 class Profile(models.Model):
     """
