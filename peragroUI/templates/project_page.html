@@ -251,7 +251,11 @@
                       <div class="col-md-55">
                         <div class="thumbnail">
                           <div class="image view view-first" mimetype="{{x.mimetype}}" mediasrc="{{x.media.url}}" moredata="{{x.file_description.metadata.width}}">
+                            {% if x.resource_link %}
+                            <img style="width: 100%; display: block;" src="/media/{{x.resource_link}}" id="{{x.id}}" alt="image" />
+                            {% else %}
                             <img style="width: 100%; display: block;" src="{{x.media.url}}" id="{{x.id}}" alt="image" />
+                            {% endif %}
                             <div class="mask">
                               <p></p>
                               <div class="tools tools-bottom">

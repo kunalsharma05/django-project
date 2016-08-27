@@ -400,32 +400,34 @@ def project_page(request, author_name, project_slug):
 				media_ob.hash = file_descr.hash
 				media_ob.save()
 				action.send(request.user, verb='uploaded', action_object=media_ob, target=project_ob)
-				# if 'video' in media_ob.mimetype:	
-				# 	transcdoer_path = MEDIA_ROOT
-				# 	transcoder = Transcoder(transcdoer_path)
-				# 	asset_name = get_asset_names_in_file_descr(file_descr)
-				# 	asset_name = asset_name[0]
-				# 	asset_id = find_asset_ids_in_file_descr(file_descr, asset_name)
-				# 	asset_id = asset_id[0]
-				# 	target_mimetype = transcoder.get_target_mimetype(media_ob.mimetype, 'image/jpeg')	
-				# 	height = file_descr.assets[0].metadata['height'].int_value
-				# 	width = file_descr.assets[0].metadata['width'].int_value
-				# 	duration = file_descr.assets[0].metadata['duration'].string_value					
-				# 	new_width = 200
-				# 	new_height = 200*(height/width)
-				# 	try:
-				# 		time = duration.split(':')
-				# 		time = eval(time[0])*3600 + eval(time[1])*60 + eval(time[2])
-				# 	except:
-				# 		time = duration.split('.')
-				# 		time = eval(time[0])
-				# 	if time < 10:
-				# 		options = {'second':-1,'size':(new_width,new_height)}
-				# 	else:
-				# 		options = {'second':5,'size':(new_width,new_height)}
-				# 	get_image = transcoder.transcode(file_descr, asset_id, target_mimetype, **options)
-				# 	media_ob.resource_link = get_image[0]
-				# 	media_ob.save()				 
+				if 'video' in media_ob.mimetype:	
+					transcdoer_path = MEDIA_ROOT
+					transcoder = Transcoder(transcdoer_path)
+					asset_name = get_asset_names_in_file_descr(file_descr)
+					asset_name = asset_name[0]
+					asset_id = find_asset_ids_in_file_descr(file_descr, asset_name)
+					asset_id = asset_id[0]
+					target_mimetype = transcoder.get_target_mimetype(media_ob.mimetype, 'image/jpeg')	
+					height = file_descr.assets[0].metadata['height'].int_value
+					width = file_descr.assets[0].metadata['width'].int_value
+					print('height', height)
+					print('height', width)					
+					duration = file_descr.assets[0].metadata['duration'].string_value					
+					# new_width = 200
+					# new_height = 200*(height/width)
+					try:
+						time = duration.split(':')
+						time = eval(time[0])*3600 + eval(time[1])*60 + eval(time[2])
+					except:
+						time = duration.split('.')
+						time = eval(time[0])
+					if time < 10:
+						options = {'second':-1,'size':(width, height)}
+					else:
+						options = {'second':5,'size':(width, height)}
+					get_image = transcoder.transcode(file_descr, asset_id, target_mimetype, **options)
+					media_ob.resource_link = get_image[0]
+					media_ob.save()				 
 
 		return HttpResponse('done')
 	else:
